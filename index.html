@@ -6,6 +6,7 @@
 <title>SolarPinas — Find Your Perfect Solar Setup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --sun:#F59E0B;--sun-light:#FDE68A;--sun-deep:#D97706;
@@ -573,6 +574,18 @@ textarea.nf-input{resize:vertical;min-height:80px}
 .pulse{animation:pulse-ring 2s ease infinite}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:99px}
 @media(min-width:640px){.products-list{display:grid;grid-template-columns:1fr 1fr}.stats-grid{grid-template-columns:repeat(4,1fr)}.hero-title{font-size:2.5rem}}
+
+/* ── APP LOADER ── */
+#app-loader{position:fixed;inset:0;z-index:9999;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
+#app-loader.fade{opacity:0;pointer-events:none}
+.loader-sun{font-size:3.5rem;animation:loadspin 2s linear infinite}
+@keyframes loadspin{to{transform:rotate(360deg)}}
+.loader-msg{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--gray-400);text-align:center}
+.loader-bar{width:200px;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin-top:4px}
+.loader-fill{height:100%;background:linear-gradient(90deg,var(--sun),var(--sun-deep));border-radius:99px;animation:barfill 1.8s ease-in-out infinite}
+@keyframes barfill{0%{width:0%}70%{width:80%}100%{width:100%}}
+.sb-cfg-notice{background:var(--red-light);border:1.5px solid #FCA5A5;border-radius:10px;padding:12px 14px;font-size:.8rem;color:#7F1D1D;margin:0 16px 12px;display:none}
+.sb-cfg-notice.show{display:block}
 </style>
 </head>
 <body>
@@ -799,6 +812,11 @@ textarea.nf-input{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<div id="app-loader">
+  <div class="loader-sun">☀️</div>
+  <div class="loader-msg" id="loader-msg">Connecting to SolarPinas…</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
 <div id="toast"></div>
 
 <nav id="bottom-nav">
@@ -815,13 +833,141 @@ textarea.nf-input{resize:vertical;min-height:80px}
 /* ============================================================
    DATABASE
 ============================================================ */
-const DB={
-  CATEGORIES:'sp_categories', GROUPS:'sp_groups', PRODUCTS:'sp_products',
-  PRODUCT_GROUPS:'sp_pg', CLICK_LOGS:'sp_clicks',
-  THREADS:'sp_threads', REPLIES:'sp_replies',
-  BRAND_VOTES:'sp_brand_votes', BRANDS:'sp_brands'
+/* ═══════════════════════════════════════════════════════════
+   SUPABASE CONFIG
+   1. Go to https://supabase.com → Your Project → Settings → API
+   2. Copy "Project URL" → paste as SUPABASE_URL
+   3. Copy "anon / public" key → paste as SUPABASE_ANON
+   Run the SQL in setup.sql to create all tables first!
+═══════════════════════════════════════════════════════════ */
+const SUPABASE_URL  = 'https://asvjqooixfqhbpttqagc.supabase.co';
+const SUPABASE_ANON = 'https://asvjqooixfqhbpttqagc.supabase.co';
+const ADMIN_PASS    = 'supabase@Edrian#25';
+
+let SB; // Supabase client, set in initApp()
+
+/* ── In-memory cache (all render fns read this synchronously) ── */
+const C = {
+  categories:[], groups:[], products:[], pg:[],
+  clicks:[], threads:[], replies:{}, brands:{},
 };
-const ADMIN_PASS='solar2024';
+
+/* ── localStorage: only rate-limits + per-browser vote flags ── */
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+/* ── Cache reader helpers (sync, used by all render fns) ── */
+function getCats()    { return C.categories }
+function getGroups()  { return C.groups }
+function getProducts(){ return C.products }
+function getPG()      { return C.pg }
+function getClicks()  { return C.clicks }
+function getThreads() { return C.threads }
+function getReplies() { return C.replies }
+function getBrands()  { return C.brands }
+function getBrandVotes(){ return lsGet('sp_bvotes') || {} }
+function getGroupsByCat(id){ return C.groups.filter(g=>g.category_id==id) }
+function getProdsByGroup(gid){
+  const ids = C.pg.filter(x=>x.group_id==gid).map(x=>x.product_id);
+  return C.products.filter(p=>ids.includes(p.id));
+}
+function getGroupProdCount(gid){ return C.pg.filter(x=>x.group_id==gid).length }
+function getGroupTotal(gid){ return getProdsByGroup(gid).reduce((s,p)=>s+p.price,0) }
+
+/* ── Supabase helpers ── */
+async function sbFetch(table, opts={}){
+  let q = SB.from(table).select(opts.select||'*');
+  if(opts.eq) Object.entries(opts.eq).forEach(([k,v])=>{ q=q.eq(k,v); });
+  if(opts.order) q = q.order(opts.order, {ascending: opts.asc??false});
+  const {data,error} = await q;
+  if(error){ console.error('sbFetch',table,error); return []; }
+  return data||[];
+}
+async function sbInsert(table, row){
+  const {data,error} = await SB.from(table).insert(row).select().single();
+  if(error){ console.error('sbInsert',table,error); return null; }
+  return data;
+}
+async function sbUpdate(table, id, changes){
+  const {error} = await SB.from(table).update(changes).eq('id',id);
+  if(error){ console.error('sbUpdate',table,error); }
+  return !error;
+}
+async function sbDelete(table, id){
+  const {error} = await SB.from(table).delete().eq('id',id);
+  if(error){ console.error('sbDelete',table,error); }
+  return !error;
+}
+async function sbDeleteWhere(table, col, val){
+  const {error} = await SB.from(table).delete().eq(col,val);
+  if(error){ console.error('sbDeleteWhere',table,error); }
+  return !error;
+}
+async function sbIncrementVotes(table, id){
+  // Use a raw RPC to atomically increment; fallback: read-then-write
+  const {error} = await SB.rpc('increment_votes', {tbl: table, row_id: id});
+  if(error){
+    // fallback
+    const {data} = await SB.from(table).select('votes').eq('id',id).single();
+    if(data) await SB.from(table).update({votes:(data.votes||0)+1}).eq('id',id);
+  }
+}
+
+/* ── Load all data into cache ── */
+function setLoaderMsg(m){ const el=document.getElementById('loader-msg'); if(el) el.textContent=m; }
+function hideLoader(){ const el=document.getElementById('app-loader'); if(el){ el.classList.add('fade'); setTimeout(()=>el.style.display='none',550); }}
+
+async function loadAllData(){
+  setLoaderMsg('Loading products & groups…');
+  const [cats,grps,prods,pg] = await Promise.all([
+    sbFetch('categories',{order:'id',asc:true}),
+    sbFetch('groups',{order:'id',asc:true}),
+    sbFetch('products',{order:'id',asc:true}),
+    sbFetch('product_groups'),
+  ]);
+  C.categories = cats;
+  C.groups     = grps;
+  C.products   = prods;
+  C.pg         = pg;
+
+  setLoaderMsg('Loading community & brands…');
+  const [threads,allReplies,brands,clicks] = await Promise.all([
+    sbFetch('threads',{order:'created_at',asc:false}),
+    sbFetch('replies',{order:'created_at',asc:true}),
+    sbFetch('brands',{order:'votes',asc:false}),
+    sbFetch('click_logs',{order:'created_at',asc:false}),
+  ]);
+  C.threads = threads.map(t=>({...t, ts:new Date(t.created_at).getTime()}));
+  C.replies = {};
+  allReplies.forEach(r=>{
+    if(!C.replies[r.thread_id]) C.replies[r.thread_id]=[];
+    C.replies[r.thread_id].push({...r, ts:new Date(r.created_at).getTime()});
+  });
+  C.brands = {};
+  brands.forEach(b=>{
+    if(!C.brands[b.category_key]) C.brands[b.category_key]=[];
+    C.brands[b.category_key].push(b);
+  });
+  C.clicks = clicks;
+}
+
+async function refreshForum(){
+  const [threads,allReplies] = await Promise.all([
+    sbFetch('threads',{order:'created_at',asc:false}),
+    sbFetch('replies',{order:'created_at',asc:true}),
+  ]);
+  C.threads = threads.map(t=>({...t,ts:new Date(t.created_at).getTime()}));
+  C.replies = {};
+  allReplies.forEach(r=>{
+    if(!C.replies[r.thread_id]) C.replies[r.thread_id]=[];
+    C.replies[r.thread_id].push({...r,ts:new Date(r.created_at).getTime()});
+  });
+}
+
+async function logClick(pid, platform, gid){
+  await sbInsert('click_logs',{product_id:pid, platform, group_id:gid||null});
+  C.clicks.unshift({product_id:pid, platform, group_id:gid||null, created_at:new Date().toISOString()});
+}
 
 const SEED_CATEGORIES=[
   {id:1,name:'Solar Setup',icon:'☀️',description:'Complete home & business solar systems'},
@@ -874,37 +1020,7 @@ const SEED_THREADS=[
   {id:5,author:'NorCalSolar',color:'#D97706',tag:'review',title:'⭐ Epever 40A MPPT — Honest review after 6 months',body:'Been using the Epever XTRA4415N for 6 months now. Pros: Accurate readings, Bluetooth app works well, good build quality. Cons: App can disconnect sometimes. Overall: 4/5. Would recommend for mid-range setups. Paired with 2×400W panels and 100Ah LiFePO4.',votes:9,ts:Date.now()-86400000*10,replies:[]},
 ];
 
-function dbGet(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(e){return null}}
-function dbSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-function initDB(){
-  if(!dbGet(DB.CATEGORIES))dbSet(DB.CATEGORIES,SEED_CATEGORIES);
-  if(!dbGet(DB.GROUPS))dbSet(DB.GROUPS,SEED_GROUPS);
-  if(!dbGet(DB.PRODUCTS))dbSet(DB.PRODUCTS,SEED_PRODUCTS);
-  if(!dbGet(DB.PRODUCT_GROUPS))dbSet(DB.PRODUCT_GROUPS,SEED_PG);
-  if(!dbGet(DB.CLICK_LOGS))dbSet(DB.CLICK_LOGS,[]);
-  if(!dbGet(DB.THREADS))dbSet(DB.THREADS,SEED_THREADS);
-  if(!dbGet(DB.REPLIES))dbSet(DB.REPLIES,{});
-  if(!dbGet(DB.BRAND_VOTES))dbSet(DB.BRAND_VOTES,{});
-  if(!dbGet(DB.BRANDS)){
-    const b={};BRAND_CATS.forEach(c=>{b[c.key]=c.brands.map(n=>({name:n,votes:Math.floor(Math.random()*40+5)}))});
-    dbSet(DB.BRANDS,b);
-  }
-}
-
-function getCats(){return dbGet(DB.CATEGORIES)||[]}
-function getGroups(){return dbGet(DB.GROUPS)||[]}
-function getProducts(){return dbGet(DB.PRODUCTS)||[]}
-function getPG(){return dbGet(DB.PRODUCT_GROUPS)||[]}
-function getClicks(){return dbGet(DB.CLICK_LOGS)||[]}
-function getThreads(){return dbGet(DB.THREADS)||[]}
-function getReplies(){return dbGet(DB.REPLIES)||{}}
-function getBrandVotes(){return dbGet(DB.BRAND_VOTES)||{}}
-function getBrands(){return dbGet(DB.BRANDS)||{}}
-function getGroupsByCat(id){return getGroups().filter(g=>g.category_id==id)}
-function getProdsByGroup(gid){const ids=getPG().filter(x=>x.gid==gid).map(x=>x.pid);return getProducts().filter(p=>ids.includes(p.id))}
-function getGroupProdCount(gid){return getPG().filter(x=>x.gid==gid).length}
-function getGroupTotal(gid){return getProdsByGroup(gid).reduce((s,p)=>s+p.price,0)}
-function logClick(pid,platform,gid){const l=getClicks();l.push({pid,platform,gid,ts:Date.now()});dbSet(DB.CLICK_LOGS,l)}
+/* DB helpers defined in CONFIG section above */
 
 /* ============================================================
    NAV
@@ -990,14 +1106,14 @@ function renderProducts(){
   document.getElementById('share-modal-sub').textContent='"'+g.name+'" — '+formatP(total);
   if(!prods.length){c.innerHTML=`<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No products yet</div><div class="empty-state-sub">Add products via Admin panel.</div></div>`;return}
   prods.forEach(p=>{
-    const clicks=getClicks().filter(l=>l.pid==p.id).length;
+    const clicks=getClicks().filter(l=>l.product_id==p.id).length;
     const d=document.createElement('div');d.className='product-card';
     d.innerHTML=`<div class="product-img-wrap">${p.image?`<img src="${p.image}" alt="${p.name}" loading="lazy">`:`<div class="product-img-placeholder"><div class="placeholder-icon">🔆</div><span>${p.name.split(' ').slice(0,2).join(' ')}</span></div>`}${p.badge?`<div class="product-badge">${p.badge}</div>`:''}</div><div class="product-body"><div class="product-name">${p.name}</div><div class="product-desc">${p.description}</div><div class="product-tags">${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="product-price">${formatP(p.price)}<span class="price-note"> estimated</span></div><div class="affiliate-toggle"><button class="affiliate-btn shopee-btn" onclick="handleAff(${p.id},'shopee','${p.shopee_url}')">🛒 Shopee</button><button class="affiliate-btn lazada-btn" onclick="handleAff(${p.id},'lazada','${p.lazada_url}')">🏪 Lazada</button></div><div class="product-footer"><span>👆 ${clicks} click${clicks!==1?'s':''}</span><span>Tap to buy →</span></div></div>`;
     c.appendChild(d);
   });
 }
-function handleAff(pid,platform,url){
-  logClick(pid,platform,state.group?.id);
+async function handleAff(pid,platform,url){
+  await logClick(pid,platform,state.group?.id);
   showToast('Opening '+(platform==='shopee'?'🛒 Shopee':'🏪 Lazada')+'...');
   setTimeout(()=>window.open(url,'_blank'),400);renderProducts();
 }
@@ -1085,7 +1201,7 @@ function showNewPostForm(){
 function hideNewPostForm(){document.getElementById('new-post-form-wrap').classList.remove('show');document.getElementById('spam-warn-post').classList.remove('show')}
 function selectPostTag(el){document.querySelectorAll('.nf-tag-chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedPostTag=el.dataset.tag}
 
-function submitPost(){
+async function submitPost(){
   const rawName=(document.getElementById('nf-name')?.value||'').trim();
   const rawTitle=(document.getElementById('nf-title')?.value||'').trim();
   const rawBody=(document.getElementById('nf-body')?.value||'').trim();
@@ -1112,20 +1228,23 @@ function submitPost(){
   // duplicate title (last 10 min)
   const threads=getThreads();
   if(threads.find(t=>t.title.toLowerCase().trim()===rawTitle.toLowerCase().trim()&&Date.now()-t.ts<600000)){showToast('⚠️ This post already exists!');return}
-  const newId=Math.max(0,...threads.map(t=>t.id))+1;
   const colors=['#2563EB','#059669','#7C3AED','#DC2626','#D97706','#0891B2','#BE185D'];
-  threads.unshift({id:newId,author:nameClean||'Anonymous',color:colors[newId%colors.length],tag:selectedPostTag,title:rawTitle,body:rawBody,votes:0,ts:Date.now()});
-  dbSet(DB.THREADS,threads);addRateLog('sp_post_ts');
+  const author=nameClean||'Anonymous';
+  const inserted=await sbInsert('threads',{author,color:colors[threads.length%colors.length],tag:selectedPostTag,title:rawTitle,body:rawBody,votes:0});
+  if(!inserted){showToast('❌ Failed to post. Check your connection.');generateCaptcha('post-captcha-q','post-captcha-ans');return}
+  addRateLog('sp_post_ts');
+  await refreshForum();
   ['nf-name','nf-title','nf-body'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
   ['tc-title','tc-body'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='0 / '+(id==='tc-title'?150:2000)});
   hideNewPostForm();renderThreadList();showToast('✅ Post submitted! ('+SEC.MAX_POSTS_PER_HOUR+' posts/hr limit)');
 }
 
-function voteThread(e,tid){
+async function voteThread(e,tid){
   e.stopPropagation();
   const key='tv_'+tid;if(localStorage.getItem(key)==='1'){showToast('Already voted!');return}
-  const threads=getThreads();const t=threads.find(x=>x.id==tid);if(!t)return;
-  t.votes++;dbSet(DB.THREADS,threads);localStorage.setItem(key,'1');renderThreadList();showToast('▲ Upvoted!');
+  const t=C.threads.find(x=>x.id==tid);if(!t)return;
+  await sbIncrementVotes('threads',tid);
+  t.votes++;localStorage.setItem(key,'1');renderThreadList();showToast('▲ Upvoted!');
 }
 
 function openThread(tid){
@@ -1179,7 +1298,7 @@ function openThread(tid){
 
 function closeThreadDetail(){document.getElementById('community-list-view').classList.remove('hide');document.getElementById('thread-detail-view').classList.remove('show')}
 
-function submitReply(tid){
+async function submitReply(tid){
   const rawName=(document.getElementById('rname-'+tid)?.value||'').trim();
   const rawBody=(document.getElementById('rtext-'+tid)?.value||'').trim();
   const captchaEl=document.getElementById('rca-'+tid);
@@ -1200,17 +1319,21 @@ function submitReply(tid){
   document.getElementById('spam-warn-r-'+tid)?.classList.remove('show');
   const nameClean=rawName.replace(/[^a-zA-Z\s\u00C0-\u024F.\-]/g,'').trim();
   const author=nameClean.length>=SEC.MIN_NAME_LEN?nameClean:'Anonymous';
-  const allReplies=getReplies();if(!allReplies[tid])allReplies[tid]=[];
+  const existing=C.replies[tid]||[];
   const colors=['#2563EB','#059669','#7C3AED','#DC2626','#D97706','#0891B2'];
-  allReplies[tid].push({author,body:rawBody,votes:0,color:colors[allReplies[tid].length%colors.length],ts:Date.now()});
-  dbSet(DB.REPLIES,allReplies);addRateLog('sp_reply_ts');
+  const color=colors[existing.length%colors.length];
+  const inserted=await sbInsert('replies',{thread_id:parseInt(tid),author,body:rawBody,votes:0,color});
+  if(!inserted){showToast('❌ Failed to post reply.');return}
+  addRateLog('sp_reply_ts');
+  await refreshForum();
   openThread(tid);showToast('✅ Reply posted!');
 }
 
-function voteReply(tid,idx,el){
+async function voteReply(tid,idx,el){
   const key='rv_'+tid+'_'+idx;if(localStorage.getItem(key)==='1'){showToast('Already voted!');return}
-  const allReplies=getReplies();allReplies[tid][idx].votes=(allReplies[tid][idx].votes||0)+1;
-  dbSet(DB.REPLIES,allReplies);localStorage.setItem(key,'1');
+  const r=(C.replies[tid]||[])[idx];if(!r)return;
+  await sbIncrementVotes('replies',r.id);
+  r.votes=(r.votes||0)+1;localStorage.setItem(key,'1');
   el.textContent='▲ '+allReplies[tid][idx].votes;el.classList.add('voted');showToast('▲ Upvoted!');
 }
 
@@ -1267,24 +1390,26 @@ function toggleBrandCat(key){
   const open=body.classList.contains('open');
   body.classList.toggle('open',!open);tog.classList.toggle('open',!open);
 }
-function voteBrand(catKey,brandName,ci){
+async function voteBrand(catKey,brandName,ci){
   const voted=getBrandVotes();
   if(voted[catKey]){showToast('Already voted in this category!');return}
-  const brands=getBrands();
-  const b=brands[catKey].find(x=>x.name===brandName);
+  const b=(C.brands[catKey]||[]).find(x=>x.name===brandName);
   if(!b){showToast('Brand not found');return}
+  await sbIncrementVotes('brands',b.id);
   b.votes++;voted[catKey]=brandName;
-  dbSet(DB.BRANDS,brands);dbSet(DB.BRAND_VOTES,voted);
+  lsSet('sp_bvotes',voted);
   renderBrandRatings();showToast('✅ Voted for '+brandName+'!');
 }
-function addBrand(catKey){
+async function addBrand(catKey){
   const input=document.getElementById('brand-add-'+catKey);
   const name=input?.value.trim();
   if(!name){showToast('⚠️ Enter a brand name');return}
-  const brands=getBrands();
-  if(brands[catKey].find(b=>b.name.toLowerCase()===name.toLowerCase())){showToast('Brand already in list!');return}
-  brands[catKey].push({name,votes:0});
-  dbSet(DB.BRANDS,brands);input.value='';
+  if((C.brands[catKey]||[]).find(b=>b.name.toLowerCase()===name.toLowerCase())){showToast('Brand already in list!');return}
+  const inserted=await sbInsert('brands',{category_key:catKey,name,votes:0});
+  if(!inserted){showToast('❌ Failed to add brand');return}
+  if(!C.brands[catKey]) C.brands[catKey]=[];
+  C.brands[catKey].push(inserted);
+  input.value='';
   renderBrandRatings();showToast('✅ '+name+' added!');
 }
 
@@ -1342,7 +1467,7 @@ function renderAdminPanel(){
       <div class="admin-form-card">
         <div class="admin-form-title">📦 All Products (${products.length})</div>
         ${products.map(p=>`<div class="admin-list-item">
-          <div class="admin-list-info"><div class="admin-list-name">${p.name}</div><div class="admin-list-sub">${formatP(p.price)} · ${clicks.filter(l=>l.pid==p.id).length} clicks</div></div>
+          <div class="admin-list-info"><div class="admin-list-name">${p.name}</div><div class="admin-list-sub">${formatP(p.price)} · ${clicks.filter(l=>l.product_id==p.id).length} clicks</div></div>
           <div class="admin-list-actions">
             <button class="btn-sm btn-sky" onclick="adminEditProd(${p.id})">✏️</button>
             <button class="btn-sm btn-danger" onclick="adminDelProd(${p.id})">🗑️</button>
@@ -1411,14 +1536,14 @@ function renderAdminPanel(){
     <div id="admin-tab-analytics" class="admin-tab-content">
       <div class="admin-form-card">
         <div class="admin-form-title">📊 Top Clicked Products</div>
-        ${products.map(p=>({...p,cc:clicks.filter(l=>l.pid==p.id).length})).sort((a,b)=>b.cc-a.cc).slice(0,6).map(p=>`<div class="admin-list-item"><div class="admin-list-info"><div class="admin-list-name">${p.name}</div><div class="admin-list-sub">${p.cc} clicks</div></div><div style="font-family:'Syne',sans-serif;font-weight:800;color:var(--sun)">${p.cc}</div></div>`).join('')||'<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:.8rem">No clicks yet</div>'}
+        ${products.map(p=>({...p,cc:clicks.filter(l=>l.product_id==p.id).length})).sort((a,b)=>b.cc-a.cc).slice(0,6).map(p=>`<div class="admin-list-item"><div class="admin-list-info"><div class="admin-list-name">${p.name}</div><div class="admin-list-sub">${p.cc} clicks</div></div><div style="font-family:'Syne',sans-serif;font-weight:800;color:var(--sun);">${p.cc}</div></div>`).join('')||'<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:.8rem">No clicks yet</div>'}
       </div>
       <div class="admin-form-card">
         <div class="admin-form-title">📈 Platform Stats</div>
         <div class="admin-list-item"><div class="admin-list-info"><div class="admin-list-name">🛒 Shopee</div></div><div style="font-family:'Syne',sans-serif;font-weight:800;color:#EE4D2D">${clicks.filter(l=>l.platform==='shopee').length}</div></div>
         <div class="admin-list-item"><div class="admin-list-info"><div class="admin-list-name">🏪 Lazada</div></div><div style="font-family:'Syne',sans-serif;font-weight:800;color:#0F146B">${clicks.filter(l=>l.platform==='lazada').length}</div></div>
       </div>
-      <button class="btn-sm btn-danger" style="margin-bottom:8px" onclick="if(confirm('Clear click logs?')){dbSet(DB.CLICK_LOGS,[]);renderAdminPanel();showToast('Cleared')}">🗑️ Reset Click Logs</button>
+      <button class="btn-sm btn-danger" style="margin-bottom:8px" onclick="(async()=>{if(!confirm('Clear click logs?'))return;await SB.from('click_logs').delete().neq('id',0);C.clicks=[];renderAdminPanel();showToast('Cleared');})()">🗑️ Reset Click Logs</button>
     </div>
     <div style="margin-top:16px"><button class="btn-sm btn-danger" onclick="adminLogout()">🔒 Logout</button></div>
   </div>`;
@@ -1432,14 +1557,19 @@ function toggleGroupEditPanel(gid){
   const el=document.getElementById('gep-'+gid);
   el.classList.toggle('show');
 }
-function toggleProductInGroup(gid,pid,checked){
-  const pg=getPG();
-  if(checked){if(!pg.some(x=>x.gid==gid&&x.pid==pid))pg.push({gid,pid})}
-  else{const idx=pg.findIndex(x=>x.gid==gid&&x.pid==pid);if(idx>-1)pg.splice(idx,1)}
-  dbSet(DB.PRODUCT_GROUPS,pg);
+async function toggleProductInGroup(gid,pid,checked){
+  if(checked){
+    if(!C.pg.some(x=>x.group_id==gid&&x.product_id==pid)){
+      const inserted=await sbInsert('product_groups',{group_id:parseInt(gid),product_id:parseInt(pid)});
+      if(inserted) C.pg.push(inserted);
+    }
+  } else {
+    await SB.from('product_groups').delete().eq('group_id',gid).eq('product_id',pid);
+    C.pg=C.pg.filter(x=>!(x.group_id==gid&&x.product_id==pid));
+  }
   showToast(checked?'✅ Product added to group':'🗑️ Product removed from group');
 }
-function saveGroupEdit(gid){
+async function saveGroupEdit(gid){
   const groups=getGroups();const g=groups.find(x=>x.id==gid);if(!g)return;
   g.name=document.getElementById('gef-name-'+gid)?.value.trim()||g.name;
   g.icon=document.getElementById('gef-icon-'+gid)?.value.trim()||g.icon;
@@ -1447,42 +1577,51 @@ function saveGroupEdit(gid){
   g.style=document.getElementById('gef-style-'+gid)?.value||g.style;
   const tagsRaw=document.getElementById('gef-tags-'+gid)?.value.trim();
   g.tags=tagsRaw?tagsRaw.split(',').map(t=>t.trim()).filter(Boolean):[];
-  dbSet(DB.GROUPS,groups);showToast('✅ Group saved!');renderAdminPanel();
+  await sbUpdate('groups',gid,{name:g.name,icon:g.icon,description:g.description,style:g.style,tags:g.tags});
+  showToast('✅ Group saved!');renderAdminPanel();
 }
-function adminSaveProd(){
+async function adminSaveProd(){
   const name=document.getElementById('np-name')?.value.trim();
   const price=parseFloat(document.getElementById('np-price')?.value);
   if(!name||!price){showToast('⚠️ Name and price required');return}
-  const products=getProducts();const newId=Math.max(0,...products.map(p=>p.id))+1;
   const tagsRaw=document.getElementById('np-tags')?.value.trim();
-  products.push({id:newId,name,price,description:document.getElementById('np-desc')?.value.trim()||'',tags:tagsRaw?tagsRaw.split(',').map(t=>t.trim()):[],shopee_url:document.getElementById('np-shopee')?.value.trim()||'https://shopee.ph',lazada_url:document.getElementById('np-lazada')?.value.trim()||'https://lazada.com.ph',image:null,badge:document.getElementById('np-badge')?.value.trim()||null});
-  dbSet(DB.PRODUCTS,products);showToast('✅ Product added!');renderAdminPanel();
+  const row={name,price,description:document.getElementById('np-desc')?.value.trim()||'',tags:tagsRaw?tagsRaw.split(',').map(t=>t.trim()):[],shopee_url:document.getElementById('np-shopee')?.value.trim()||'https://shopee.ph',lazada_url:document.getElementById('np-lazada')?.value.trim()||'https://lazada.com.ph',badge:document.getElementById('np-badge')?.value.trim()||null};
+  const inserted=await sbInsert('products',row);
+  if(!inserted){showToast('❌ Failed to save product');return}
+  C.products.push(inserted);showToast('✅ Product added!');renderAdminPanel();
 }
-function adminEditProd(id){
+async function adminEditProd(id){
   const p=getProducts().find(x=>x.id===id);if(!p)return;
   const n=prompt('Product name:',p.name);if(n===null)return;
   const pr=prompt('Price (₱):',p.price);if(pr===null)return;
-  const prods=getProducts();const idx=prods.findIndex(x=>x.id===id);
-  prods[idx].name=n.trim()||p.name;prods[idx].price=parseFloat(pr)||p.price;
-  dbSet(DB.PRODUCTS,prods);showToast('✅ Updated!');renderAdminPanel();
+  const ok=await sbUpdate('products',id,{name:n.trim()||p.name,price:parseFloat(pr)||p.price});
+  if(!ok){showToast('❌ Update failed');return}
+  const idx=C.products.findIndex(x=>x.id===id);
+  if(idx>-1){C.products[idx].name=n.trim()||p.name;C.products[idx].price=parseFloat(pr)||p.price;}
+  showToast('✅ Updated!');renderAdminPanel();
 }
-function adminDelProd(id){
+async function adminDelProd(id){
   if(!confirm('Delete product?'))return;
-  dbSet(DB.PRODUCTS,getProducts().filter(p=>p.id!==id));
-  dbSet(DB.PRODUCT_GROUPS,getPG().filter(pg=>pg.pid!==id));
+  await sbDelete('products',id);
+  await sbDeleteWhere('product_groups','product_id',id);
+  C.products=C.products.filter(p=>p.id!==id);
+  C.pg=C.pg.filter(pg=>pg.product_id!==id);
   showToast('🗑️ Deleted');renderAdminPanel();
 }
-function adminSaveGroup(){
+async function adminSaveGroup(){
   const name=document.getElementById('ng-name')?.value.trim();if(!name){showToast('⚠️ Name required');return}
-  const groups=getGroups();const newId=Math.max(0,...groups.map(g=>g.id))+1;
   const tagsRaw=document.getElementById('ng-tags')?.value.trim();
-  groups.push({id:newId,category_id:parseInt(document.getElementById('ng-cat')?.value),name,description:document.getElementById('ng-desc')?.value.trim()||'',icon:document.getElementById('ng-icon')?.value.trim()||'📦',style:document.getElementById('ng-style')?.value||'default',tags:tagsRaw?tagsRaw.split(',').map(t=>t.trim()):[]});
-  dbSet(DB.GROUPS,groups);showToast('✅ Group added!');renderAdminPanel();
+  const row={category_id:parseInt(document.getElementById('ng-cat')?.value),name,description:document.getElementById('ng-desc')?.value.trim()||'',icon:document.getElementById('ng-icon')?.value.trim()||'📦',style:document.getElementById('ng-style')?.value||'default',tags:tagsRaw?tagsRaw.split(',').map(t=>t.trim()):[]};
+  const inserted=await sbInsert('groups',row);
+  if(!inserted){showToast('❌ Failed to save group');return}
+  C.groups.push(inserted);showToast('✅ Group added!');renderAdminPanel();
 }
-function adminDelGroup(id){
+async function adminDelGroup(id){
   if(!confirm('Delete group?'))return;
-  dbSet(DB.GROUPS,getGroups().filter(g=>g.id!==id));
-  dbSet(DB.PRODUCT_GROUPS,getPG().filter(pg=>pg.gid!==id));
+  await sbDelete('groups',id);
+  await sbDeleteWhere('product_groups','group_id',id);
+  C.groups=C.groups.filter(g=>g.id!==id);
+  C.pg=C.pg.filter(pg=>pg.group_id!==id);
   showToast('🗑️ Deleted');renderAdminPanel();
 }
 function adminLogout(){adminAuth=false;renderAdmin();showToast('Logged out')}
@@ -1684,9 +1823,31 @@ function timeAgo(ts){const d=Date.now()-ts;if(d<60000)return'just now';if(d<3600
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
 function checkHashRoute(){const h=window.location.hash.substring(1);const p={};h.split('&').forEach(part=>{const[k,v]=part.split('=');if(k&&v)p[k]=v});if(p.group){const g=getGroups().find(x=>x.id==p.group);if(g){const cat=getCats().find(c=>c.id==g.category_id);state.cat=cat;navigate('products',{group:g})}}}
 
-document.addEventListener('DOMContentLoaded',()=>{
-  initDB();renderHome();checkHashRoute();
-});
+async function initApp(){
+  // Validate config
+  if(SUPABASE_URL.includes('YOUR_PROJECT') || SUPABASE_ANON.includes('YOUR_ANON')){
+    document.getElementById('loader-msg').innerHTML='⚠️ Please set your Supabase URL &amp; Key in the JS config!';
+    document.querySelector('.loader-fill').style.animation='none';
+    document.querySelector('.loader-fill').style.width='100%';
+    document.querySelector('.loader-fill').style.background='#EF4444';
+    return;
+  }
+  SB = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  try {
+    await loadAllData();
+    setLoaderMsg('Done! Welcome to SolarPinas ☀️');
+    await new Promise(r=>setTimeout(r,400));
+    hideLoader();
+    renderHome();
+    checkHashRoute();
+  } catch(err){
+    console.error('Init failed:',err);
+    document.getElementById('loader-msg').textContent='❌ Connection failed. Check your Supabase config.';
+    document.querySelector('.loader-fill').style.animation='none';
+    document.querySelector('.loader-fill').style.background='#EF4444';
+  }
+}
+document.addEventListener('DOMContentLoaded', initApp);
 </script>
 </body>
 </html>
