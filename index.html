@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SolarPinas — Find Your Perfect Solar Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sun:#F59E0B;--sun-light:#FDE68A;--sun-deep:#D97706;
+  --navy:#0F172A;--navy-mid:#1E293B;--navy-soft:#334155;
+  --sky:#0EA5E9;--sky-light:#E0F2FE;
+  --green:#10B981;--green-light:#D1FAE5;
+  --purple:#8B5CF6;--purple-light:#EDE9FE;
+  --red:#EF4444;--red-light:#FEE2E2;
+  --orange:#F97316;--orange-light:#FFEDD5;
+  --white:#FFFFFF;--off-white:#F8FAFC;
+  --gray-100:#F1F5F9;--gray-200:#E2E8F0;--gray-300:#CBD5E1;
+  --gray-400:#94A3B8;--gray-500:#64748B;--gray-600:#475569;
+  --text-main:#0F172A;--text-sub:#475569;
+  --card-radius:16px;--btn-radius:12px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,.10),0 2px 6px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.08);
+  --shadow-glow:0 0 0 3px rgba(245,158,11,.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--text-main);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;background:none;font-family:inherit}
+img{max-width:100%;display:block}ul{list-style:none}input,select,textarea{font-family:inherit}
+h1,h2,h3,h4,h5{font-family:'Syne',sans-serif;line-height:1.2}
+
+/* HEADER */
+#app-header{position:sticky;top:0;z-index:100;background:var(--navy);border-bottom:2px solid var(--sun);padding:0 16px}
+.header-inner{max-width:520px;margin:0 auto;height:56px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--sun),var(--sun-deep));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:1.1rem}.logo-text span{color:var(--sun)}
+.header-actions{display:flex;align-items:center;gap:6px}
+.icon-btn{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--gray-300);font-size:17px;transition:background .2s,color .2s}
+.icon-btn:hover,.icon-btn.active{background:rgba(255,255,255,.1);color:var(--sun)}
+
+/* BREADCRUMB */
+#breadcrumb-bar{background:var(--navy-mid);padding:8px 16px;display:none}
+#breadcrumb-bar.show{display:block}
+.breadcrumb-inner{max-width:520px;margin:0 auto;display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--gray-400);overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.breadcrumb-inner::-webkit-scrollbar{display:none}
+.bc-item{color:var(--gray-400)}.bc-item.active{color:var(--sun);font-weight:600}
+.bc-item.clickable{cursor:pointer}.bc-item.clickable:hover{color:var(--sky)}
+.bc-sep{color:var(--gray-600);font-size:.7rem}
+
+/* PAGES */
+.page{display:none;animation:fadeUp .35s ease forwards}.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+#page-home{background:var(--navy);min-height:calc(100vh - 56px);position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(245,158,11,.15) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(14,165,233,.10) 0%,transparent 50%);pointer-events:none}
+.hero-content{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:40px 20px 110px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.35);color:var(--sun);padding:5px 12px;border-radius:99px;font-size:.78rem;font-weight:600;letter-spacing:.04em;margin-bottom:20px}
+.hero-title{font-family:'Syne',sans-serif;font-weight:800;font-size:2.1rem;color:#fff;line-height:1.15;margin-bottom:14px}
+.hero-title .accent{color:var(--sun)}
+.hero-subtitle{color:var(--gray-400);font-size:1rem;line-height:1.6;margin-bottom:32px}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:36px}
+.hero-stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 10px;text-align:center}
+.hero-stat-num{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--sun)}
+.hero-stat-label{font-size:.72rem;color:var(--gray-400);margin-top:2px;line-height:1.3}
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 24px;background:linear-gradient(135deg,var(--sun),var(--sun-deep));color:var(--navy);font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;border-radius:var(--btn-radius);transition:transform .18s,box-shadow .18s;box-shadow:0 4px 20px rgba(245,158,11,.4)}
+.btn-primary:active{transform:scale(.98)}.btn-primary:hover{box-shadow:0 6px 28px rgba(245,158,11,.55)}
+.btn-secondary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 24px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);color:#fff;font-family:'Syne',sans-serif;font-weight:600;font-size:.95rem;border-radius:var(--btn-radius);transition:background .18s;margin-top:10px}
+.btn-secondary:hover{background:rgba(255,255,255,.10)}
+.hero-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.tool-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;cursor:pointer;transition:background .2s,border-color .2s}
+.tool-card:hover{background:rgba(255,255,255,.08);border-color:rgba(245,158,11,.3)}
+.tool-card-icon{font-size:1.5rem;margin-bottom:6px}
+.tool-card-title{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:#fff;margin-bottom:2px}
+.tool-card-sub{font-size:.72rem;color:var(--gray-400);line-height:1.4}
+
+/* SECTION HEADER */
+.section-header{max-width:520px;margin:0 auto;padding:24px 16px 16px}
+.section-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-main);margin-bottom:4px}
+.section-sub{font-size:.88rem;color:var(--text-sub);line-height:1.5}
+
+/* CATEGORIES */
+#page-categories{background:var(--off-white);padding-bottom:100px}
+.category-grid{max-width:520px;margin:0 auto;padding:0 16px;display:flex;flex-direction:column;gap:12px}
+.category-card{background:#fff;border-radius:var(--card-radius);padding:20px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow-sm);border:1.5px solid var(--gray-200);cursor:pointer;transition:border-color .2s,box-shadow .2s,transform .15s;position:relative;overflow:hidden}
+.category-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--sun);opacity:0;transition:opacity .2s}
+.category-card:hover{border-color:var(--sun);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.category-card:hover::before{opacity:1}
+.cat-icon{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#FEF3C7,#FDE68A);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.cat-body{flex:1;min-width:0}
+.cat-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--text-main);margin-bottom:3px}
+.cat-desc{font-size:.8rem;color:var(--text-sub);line-height:1.4}
+.cat-count{font-size:.72rem;font-weight:600;color:var(--sun-deep);background:#FEF3C7;padding:3px 8px;border-radius:99px;white-space:nowrap;margin-top:6px;display:inline-block}
+.cat-arrow{color:var(--gray-300);font-size:1.1rem;flex-shrink:0}
+
+/* GROUPS */
+#page-groups{background:var(--off-white);padding-bottom:100px}
+.group-grid{max-width:520px;margin:0 auto;padding:0 16px;display:flex;flex-direction:column;gap:12px}
+.group-card{background:#fff;border-radius:var(--card-radius);padding:20px;border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);cursor:pointer;transition:all .2s}
+.group-card:hover{border-color:var(--sky);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.group-card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.group-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.group-icon.budget{background:linear-gradient(135deg,#D1FAE5,#6EE7B7)}
+.group-icon.pro{background:linear-gradient(135deg,#DBEAFE,#93C5FD)}
+.group-icon.emergency{background:linear-gradient(135deg,#FEE2E2,#FCA5A5)}
+.group-icon.default{background:linear-gradient(135deg,var(--gray-100),var(--gray-200))}
+.group-body{flex:1}.group-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--text-main);margin-bottom:3px}
+.group-desc{font-size:.82rem;color:var(--text-sub);line-height:1.45}
+.group-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{display:inline-flex;align-items:center;background:var(--sky-light);color:#0369A1;font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:99px}
+.tag.green{background:var(--green-light);color:#065F46}
+.tag.amber{background:#FEF3C7;color:#92400E}
+.tag.red{background:var(--red-light);color:#991B1B}
+.group-meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-100)}
+.group-price-range{font-size:.8rem;color:var(--text-sub)}.group-price-range strong{color:var(--text-main);font-weight:600}
+.group-product-count{font-size:.75rem;font-weight:600;color:var(--sky);background:var(--sky-light);padding:3px 10px;border-radius:99px}
+
+/* PRODUCTS */
+#page-products{background:var(--off-white);padding-bottom:120px}
+.products-list{max-width:520px;margin:0 auto;padding:0 16px;display:flex;flex-direction:column;gap:14px}
+.product-card{background:#fff;border-radius:var(--card-radius);overflow:hidden;box-shadow:var(--shadow-sm);border:1.5px solid var(--gray-200);transition:box-shadow .2s}
+.product-card:hover{box-shadow:var(--shadow-md)}
+.product-img-wrap{position:relative;background:var(--gray-100);height:160px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.product-img-wrap img{width:100%;height:100%;object-fit:cover}
+.product-img-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--gray-400);font-size:.75rem;width:100%;height:100%}
+.product-img-placeholder .placeholder-icon{font-size:2.5rem}
+.product-badge{position:absolute;top:10px;left:10px;background:var(--sun);color:var(--navy);font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:6px;font-family:'Syne',sans-serif;letter-spacing:.04em}
+.product-body{padding:16px}
+.product-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;color:var(--text-main);margin-bottom:5px;line-height:1.35}
+.product-desc{font-size:.8rem;color:var(--text-sub);line-height:1.5;margin-bottom:10px}
+.product-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.product-price{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-main);margin-bottom:12px}
+.product-price .price-note{font-size:.72rem;font-weight:400;color:var(--text-sub);font-family:'DM Sans',sans-serif}
+.affiliate-toggle{display:flex;gap:8px;margin-bottom:12px}
+.affiliate-btn{flex:1;padding:10px 8px;border-radius:10px;font-size:.78rem;font-weight:700;border:2px solid transparent;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:5px;font-family:'Syne',sans-serif}
+.shopee-btn{background:#FFF0EB;color:#EE4D2D;border-color:#FECECA}
+.shopee-btn:hover{background:#EE4D2D;color:#fff;border-color:#EE4D2D}
+.lazada-btn{background:#F0F0FF;color:#0F146B;border-color:#C7C9F5}
+.lazada-btn:hover{background:#0F146B;color:#fff;border-color:#0F146B}
+.product-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--gray-100);font-size:.73rem;color:var(--gray-400)}
+
+/* TOTAL BAR */
+#total-bar{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--navy);border-top:2px solid var(--sun);padding:12px 16px 16px;transform:translateY(100%);transition:transform .3s ease}
+#total-bar.show{transform:translateY(0)}
+.total-bar-inner{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.total-label{font-size:.72rem;color:var(--gray-400);margin-bottom:1px}
+.total-amount{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--sun)}
+.total-count{font-size:.72rem;color:var(--gray-400)}
+.total-share-btn{display:flex;align-items:center;gap:6px;padding:10px 18px;background:var(--sun);color:var(--navy);border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;white-space:nowrap;flex-shrink:0}
+
+/* ── CALC (same as v2, abbreviated) ── */
+#page-calculator{background:var(--off-white);padding-bottom:120px}
+.calc-wrap{max-width:520px;margin:0 auto;padding:0 16px}
+.period-tabs{display:flex;background:var(--gray-100);border-radius:14px;padding:4px;margin-bottom:16px;gap:4px}
+.period-tab{flex:1;padding:10px 8px;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;text-align:center;color:var(--gray-500);transition:all .2s;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.period-tab.day.active{background:#FEF3C7;color:#92400E;box-shadow:var(--shadow-sm)}
+.period-tab.night.active{background:#1E293B;color:#E0F2FE;box-shadow:var(--shadow-sm)}
+.preset-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:12px}
+.preset-scroll::-webkit-scrollbar{display:none}
+.preset-chips{display:flex;gap:8px;padding-bottom:4px;width:max-content}
+.preset-chip{display:flex;align-items:center;gap:5px;padding:7px 12px;background:#fff;border:1.5px solid var(--gray-200);border-radius:99px;font-size:.75rem;font-weight:600;color:var(--text-main);white-space:nowrap;cursor:pointer;transition:all .18s;box-shadow:var(--shadow-sm)}
+.preset-chip:hover{border-color:var(--sun);background:#FEF3C7;color:var(--sun-deep)}
+.preset-chip .chip-icon{font-size:.95rem}
+.calc-appliance-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.calc-item{background:#fff;border-radius:14px;border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);overflow:hidden}
+.calc-item-top{display:flex;align-items:center;gap:10px;padding:12px 12px 8px}
+.calc-item-icon{font-size:1.4rem;width:34px;text-align:center;flex-shrink:0}
+.calc-item-info{flex:1;min-width:0}
+.calc-item-name{font-weight:700;font-size:.85rem;color:var(--text-main);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calc-item-watt-row{display:flex;align-items:center;gap:6px}
+.calc-item-watt-label{font-size:.72rem;color:var(--text-sub)}
+.watt-edit{width:70px;padding:3px 6px;border:1.5px solid var(--gray-200);border-radius:6px;font-size:.78rem;font-weight:700;text-align:center;color:var(--text-main);outline:none}
+.watt-edit:focus{border-color:var(--sun)}
+.watt-unit{font-size:.72rem;color:var(--text-sub)}
+.calc-item-qty{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.qty-btn{width:28px;height:28px;border-radius:8px;background:var(--gray-100);color:var(--text-main);font-size:1rem;display:flex;align-items:center;justify-content:center;font-weight:700;transition:background .15s}
+.qty-btn:hover{background:var(--gray-200)}
+.qty-val{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;min-width:18px;text-align:center}
+.calc-item-del{width:28px;height:28px;border-radius:8px;background:var(--red-light);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;transition:background .15s}
+.calc-item-del:hover{background:var(--red);color:#fff}
+.calc-item-time{padding:8px 12px 10px;background:var(--gray-100);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.time-label{font-size:.72rem;font-weight:600;color:var(--text-sub)}
+.time-range{display:flex;align-items:center;gap:6px;flex:1}
+.time-select{padding:5px 6px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--text-main);background:#fff;outline:none;cursor:pointer;min-width:0;flex:1;text-align:center}
+.time-select:focus{border-color:var(--sun)}
+.time-arrow{font-size:.8rem;color:var(--gray-400);flex-shrink:0}
+.calc-item-wh{margin-left:auto;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:var(--sun-deep);background:#FEF3C7;padding:3px 8px;border-radius:6px;white-space:nowrap}
+.add-custom-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:#fff;border:2px dashed var(--gray-300);border-radius:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;color:var(--gray-500);transition:all .2s}
+.add-custom-btn:hover{border-color:var(--sun);color:var(--sun-deep)}
+.custom-add-form{background:#fff;border-radius:12px;border:1.5px solid var(--sun);padding:14px;margin-bottom:10px;display:none}
+.custom-add-form.show{display:block}
+.custom-form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.custom-input{width:100%;padding:8px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.82rem;color:var(--text-main);outline:none}
+.custom-input:focus{border-color:var(--sun)}
+.custom-form-actions{display:flex;gap:8px}
+.btn-add-custom{flex:1;padding:9px;background:var(--sun);color:var(--navy);border-radius:8px;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem}
+.btn-cancel-custom{padding:9px 14px;background:var(--gray-100);color:var(--gray-600);border-radius:8px;font-family:'Syne',sans-serif;font-weight:600;font-size:.82rem}
+.calc-config{background:#fff;border-radius:var(--card-radius);padding:16px;margin-bottom:14px;border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm)}
+.calc-config-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text-main);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.config-item label{display:block;font-size:.72rem;font-weight:600;color:var(--text-sub);margin-bottom:4px}
+.config-select{width:100%;padding:8px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.82rem;font-weight:600;color:var(--text-main);background:#fff;outline:none;-webkit-appearance:none}
+.config-select:focus{border-color:var(--sun)}
+.calc-summary-bar{background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:var(--card-radius);padding:16px 18px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+.sum-val{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;line-height:1}
+.sum-val.day{color:#FDE68A}.sum-val.night{color:#93C5FD}.sum-val.total{color:var(--sun);font-size:1.4rem}
+.sum-label{font-size:.68rem;color:var(--gray-400);margin-top:2px}
+.result-section{margin-bottom:10px}
+.result-card{background:#fff;border-radius:var(--card-radius);border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);overflow:hidden}
+.result-card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;user-select:none}
+.result-card-header-left{display:flex;align-items:center;gap:10px}
+.result-header-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.rc-battery{background:linear-gradient(135deg,#D1FAE5,#6EE7B7)}.rc-panel{background:linear-gradient(135deg,#FEF3C7,#FDE68A)}
+.rc-scc{background:linear-gradient(135deg,var(--sky-light),#BAE6FD)}.rc-inverter{background:linear-gradient(135deg,var(--purple-light),#DDD6FE)}
+.rc-dcbreaker{background:linear-gradient(135deg,#FEE2E2,#FCA5A5)}.rc-acbreaker{background:linear-gradient(135deg,#FFEDD5,#FED7AA)}
+.rc-wire{background:linear-gradient(135deg,#E0F2FE,#BAE6FD)}.rc-tips{background:linear-gradient(135deg,var(--green-light),#A7F3D0)}
+.result-header-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text-main)}
+.result-header-sub{font-size:.72rem;color:var(--text-sub);margin-top:1px}
+.result-toggle{font-size:1rem;color:var(--gray-400);transition:transform .2s}.result-toggle.open{transform:rotate(180deg)}
+.result-card-body{padding:0 16px 16px;display:none}.result-card-body.open{display:block}
+.battery-voltage-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:var(--sun);font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;padding:10px 20px;border-radius:12px;margin-bottom:12px}
+.battery-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.battery-type-card{border-radius:12px;padding:14px;text-align:center}
+.battery-type-card.leadacid{background:linear-gradient(135deg,#F1F5F9,#E2E8F0);border:1.5px solid var(--gray-300)}
+.battery-type-card.lithium{background:linear-gradient(135deg,#D1FAE5,#A7F3D0);border:1.5px solid #6EE7B7}
+.battery-type-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;color:var(--text-main);margin-bottom:4px}
+.battery-type-ah{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text-main);line-height:1}
+.battery-type-unit{font-size:.7rem;color:var(--text-sub)}
+.battery-type-cost{font-size:.72rem;color:var(--text-sub);margin-top:4px}
+.battery-type-rec{display:inline-block;background:var(--green);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;margin-top:5px}
+.spec-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gray-100)}
+.spec-row:last-child{border-bottom:none}
+.spec-label{font-size:.8rem;color:var(--text-sub);display:flex;align-items:center;gap:5px}
+.spec-val{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--text-main)}
+.spec-val.highlight{color:var(--sun-deep)}.spec-val.green{color:var(--green)}.spec-val.blue{color:var(--sky)}.spec-val.red{color:var(--red)}.spec-val.purple{color:var(--purple)}
+.wire-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:4px}
+.wire-table th{background:var(--navy);color:var(--gray-300);padding:8px 10px;text-align:left;font-family:'Syne',sans-serif;font-size:.7rem;letter-spacing:.04em}
+.wire-table td{padding:8px 10px;border-bottom:1px solid var(--gray-100);color:var(--text-main)}
+.wire-table tr.active-row td{background:#FEF3C7;font-weight:700}
+.wire-badge{display:inline-block;background:var(--navy);color:var(--sun);font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;padding:2px 8px;border-radius:6px}
+.tip-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.tip-item:last-child{border-bottom:none}
+.tip-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.tip-text{font-size:.8rem;color:var(--text-main);line-height:1.55}
+.tip-text strong{color:var(--sun-deep)}
+.info-box{background:var(--sky-light);border:1px solid #BAE6FD;border-radius:10px;padding:10px 12px;font-size:.78rem;color:#0C4A6E;line-height:1.55;margin-top:8px}
+.info-box.warning{background:var(--red-light);border-color:#FCA5A5;color:#7F1D1D}
+.info-box.success{background:var(--green-light);border-color:#6EE7B7;color:#064E3B}
+.calc-run-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--sun),var(--sun-deep));color:var(--navy);font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;border-radius:var(--btn-radius);box-shadow:0 4px 20px rgba(245,158,11,.45);display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .18s,box-shadow .18s}
+.calc-run-btn:active{transform:scale(.98)}
+
+/* ============================================================
+   COMMUNITY PAGE
+============================================================ */
+#page-community{background:var(--off-white);padding-bottom:110px}
+.community-wrap{max-width:520px;margin:0 auto;padding:0 16px}
+
+/* Community tabs */
+.comm-tabs{display:flex;background:var(--gray-100);border-radius:14px;padding:4px;margin-bottom:16px;gap:4px}
+.comm-tab{flex:1;padding:9px 6px;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;text-align:center;color:var(--gray-500);transition:all .2s;cursor:pointer}
+.comm-tab.active{background:#fff;color:var(--navy);box-shadow:var(--shadow-sm)}
+.comm-tab-content{display:none}.comm-tab-content.active{display:block}
+
+/* Ask question / post btn */
+.post-btn-wrap{margin-bottom:14px}
+.post-question-btn{display:flex;align-items:center;gap:10px;width:100%;background:#fff;border:1.5px solid var(--gray-200);border-radius:14px;padding:14px 16px;text-align:left;box-shadow:var(--shadow-sm);transition:border-color .2s}
+.post-question-btn:hover{border-color:var(--sun)}
+.post-q-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--sky-light),#BAE6FD);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.post-q-placeholder{font-size:.85rem;color:var(--gray-400)}
+
+/* New post form */
+.new-post-form{background:#fff;border-radius:var(--card-radius);border:1.5px solid var(--sun);padding:16px;margin-bottom:14px;display:none}
+.new-post-form.show{display:block}
+.nf-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text-main);margin-bottom:12px}
+.nf-row{margin-bottom:10px}
+.nf-row label{display:block;font-size:.72rem;font-weight:600;color:var(--text-sub);margin-bottom:4px}
+.nf-input{width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.85rem;color:var(--text-main);outline:none}
+.nf-input:focus{border-color:var(--sun)}
+textarea.nf-input{resize:vertical;min-height:80px}
+.nf-tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.nf-tag-chip{padding:5px 12px;border-radius:99px;border:1.5px solid var(--gray-200);font-size:.73rem;font-weight:600;color:var(--gray-500);cursor:pointer;background:#fff;transition:all .18s}
+.nf-tag-chip.selected{background:var(--sky-light);border-color:var(--sky);color:#0369A1}
+.nf-row-name{display:flex;align-items:center;gap:8px}
+.nf-name-input{flex:1;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.82rem;color:var(--text-main);outline:none}
+.nf-name-input:focus{border-color:var(--sun)}
+.nf-actions{display:flex;gap:8px}
+.nf-submit-btn{flex:1;padding:10px;background:var(--sun);color:var(--navy);border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;transition:opacity .2s}
+.nf-cancel-btn{padding:10px 16px;background:var(--gray-100);color:var(--gray-600);border-radius:10px;font-family:'Syne',sans-serif;font-weight:600;font-size:.82rem}
+
+/* Thread filter */
+.thread-filter-row{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.thread-filter-row::-webkit-scrollbar{display:none}
+.tf-chip{padding:6px 12px;border-radius:99px;border:1.5px solid var(--gray-200);font-size:.73rem;font-weight:600;color:var(--gray-500);background:#fff;white-space:nowrap;cursor:pointer;transition:all .18s;flex-shrink:0}
+.tf-chip.active{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* Thread card */
+.thread-card{background:#fff;border-radius:var(--card-radius);border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.thread-card:hover{border-color:var(--sky);box-shadow:var(--shadow-md)}
+.thread-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.thread-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:#fff}
+.thread-meta{flex:1;min-width:0}
+.thread-author{font-size:.78rem;font-weight:700;color:var(--text-main)}
+.thread-time{font-size:.7rem;color:var(--gray-400)}
+.thread-flair{display:inline-flex;align-items:center;background:var(--sky-light);color:#0369A1;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:6px}
+.thread-flair.question{background:#FEF3C7;color:#92400E}
+.thread-flair.tip{background:var(--green-light);color:#065F46}
+.thread-flair.review{background:var(--purple-light);color:#5B21B6}
+.thread-flair.warning{background:var(--red-light);color:#991B1B}
+.thread-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text-main);margin-bottom:5px;line-height:1.3}
+.thread-excerpt{font-size:.78rem;color:var(--text-sub);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.thread-footer{display:flex;align-items:center;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--gray-100)}
+.thread-stat{display:flex;align-items:center;gap:4px;font-size:.73rem;color:var(--gray-400)}
+.thread-upvote-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;background:var(--gray-100);font-size:.73rem;font-weight:600;color:var(--gray-500);transition:all .18s}
+.thread-upvote-btn:hover,.thread-upvote-btn.voted{background:var(--orange-light);color:var(--orange)}
+
+/* Thread Detail view */
+#thread-detail-view{display:none;max-width:520px;margin:0 auto;padding:0 16px 20px}
+#thread-detail-view.show{display:block}
+#community-list-view{display:block}
+#community-list-view.hide{display:none}
+.thread-detail-back{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:var(--text-sub);margin-bottom:14px;cursor:pointer;padding:4px 0}
+.thread-detail-back:hover{color:var(--sky)}
+.thread-detail-card{background:#fff;border-radius:var(--card-radius);border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);padding:18px;margin-bottom:12px}
+.thread-detail-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--text-main);margin-bottom:8px;line-height:1.35}
+.thread-detail-body{font-size:.85rem;color:var(--text-main);line-height:1.7;margin-bottom:12px}
+.thread-detail-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--gray-100)}
+
+/* Replies */
+.replies-section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--text-sub);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.reply-card{background:#fff;border-radius:12px;border:1.5px solid var(--gray-200);padding:14px;margin-bottom:8px}
+.reply-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.reply-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.reply-author{font-size:.78rem;font-weight:700;color:var(--text-main)}
+.reply-time{font-size:.68rem;color:var(--gray-400);margin-left:auto}
+.reply-body{font-size:.82rem;color:var(--text-main);line-height:1.6}
+.reply-actions{display:flex;align-items:center;gap:8px;margin-top:8px}
+.reply-upvote{display:flex;align-items:center;gap:3px;font-size:.72rem;color:var(--gray-400);cursor:pointer;padding:3px 8px;border-radius:6px;transition:all .18s}
+.reply-upvote:hover{background:var(--orange-light);color:var(--orange)}
+.reply-input-area{background:#fff;border-radius:12px;border:1.5px solid var(--gray-200);padding:12px;margin-top:10px}
+.reply-input-title{font-size:.78rem;font-weight:600;color:var(--text-sub);margin-bottom:8px}
+.reply-input-row{display:flex;gap:8px;align-items:flex-end}
+.reply-name-wrap{display:flex;gap:6px;margin-bottom:8px}
+.reply-name-input{flex:1;padding:7px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.8rem;color:var(--text-main);outline:none}
+.reply-name-input:focus{border-color:var(--sun)}
+.reply-textarea{flex:1;padding:8px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.82rem;resize:none;min-height:60px;outline:none}
+.reply-textarea:focus{border-color:var(--sun)}
+.reply-submit-btn{padding:8px 14px;background:var(--sun);color:var(--navy);border-radius:8px;font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;flex-shrink:0}
+
+/* ── SECURITY / CAPTCHA ── */
+.captcha-box{background:var(--gray-100);border:1.5px solid var(--gray-200);border-radius:10px;padding:12px;margin-bottom:10px}
+.captcha-question{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--text-main);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.captcha-row{display:flex;align-items:center;gap:8px}
+.captcha-input{width:70px;padding:7px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.9rem;font-weight:700;text-align:center;color:var(--text-main);outline:none}
+.captcha-input:focus{border-color:var(--sun)}
+.captcha-hint{font-size:.72rem;color:var(--gray-400)}
+.cooldown-banner{background:linear-gradient(135deg,#1E293B,#0F172A);border:1.5px solid var(--gray-600);border-radius:12px;padding:14px;margin-bottom:12px;display:none}
+.cooldown-banner.show{display:flex;align-items:center;gap:10px}
+.cooldown-icon{font-size:1.3rem;flex-shrink:0}
+.cooldown-text{flex:1}
+.cooldown-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;color:#fff;margin-bottom:2px}
+.cooldown-sub{font-size:.72rem;color:var(--gray-400)}
+.cooldown-timer{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--sun);flex-shrink:0}
+.char-counter{font-size:.68rem;color:var(--gray-400);text-align:right;margin-top:3px}
+.char-counter.warn{color:var(--orange)}
+.char-counter.over{color:var(--red);font-weight:700}
+.spam-warning{background:var(--red-light);border:1.5px solid #FCA5A5;border-radius:8px;padding:8px 12px;font-size:.75rem;color:#7F1D1D;margin-top:6px;display:none}
+.spam-warning.show{display:block}
+
+/* ── CALC SHOP LINKS ── */
+.calc-shop-section{background:#fff;border-radius:var(--card-radius);border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:14px}
+.calc-shop-header{background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:14px 16px;display:flex;align-items:center;gap:10px}
+.calc-shop-header-icon{font-size:1.2rem}
+.calc-shop-header-text{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;color:#fff}
+.calc-shop-header-sub{font-size:.72rem;color:var(--gray-400);margin-top:1px}
+.calc-shop-grid{display:flex;flex-direction:column;gap:0}
+.calc-shop-link{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background .18s;text-decoration:none}
+.calc-shop-link:last-child{border-bottom:none}
+.calc-shop-link:hover{background:var(--gray-100)}
+.calc-shop-link:active{background:var(--gray-200)}
+.shop-link-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.shop-link-body{flex:1;min-width:0}
+.shop-link-label{font-size:.72rem;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
+.shop-link-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shop-link-price{font-size:.72rem;color:var(--text-sub)}
+.shop-link-arrow{font-size:.9rem;color:var(--sun);flex-shrink:0}
+.shop-link-badge{font-size:.65rem;font-weight:700;background:var(--sun);color:var(--navy);padding:2px 6px;border-radius:99px;margin-top:2px;display:inline-block}
+
+/* ── SECURITY ── */
+.captcha-box{background:var(--gray-100);border:1.5px solid var(--gray-200);border-radius:10px;padding:12px;margin-bottom:10px}
+.captcha-question{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--text-main);margin-bottom:8px}
+.captcha-row{display:flex;align-items:center;gap:10px}
+.captcha-input{width:72px;padding:7px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.9rem;font-weight:700;text-align:center;color:var(--text-main);outline:none;background:#fff}
+.captcha-input:focus{border-color:var(--sun)}
+.captcha-hint{font-size:.7rem;color:var(--gray-400);line-height:1.4}
+.cooldown-banner{background:linear-gradient(135deg,#1E293B,#0F172A);border:1.5px solid var(--gray-600);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:none;align-items:center;gap:10px}
+.cooldown-banner.show{display:flex}
+.cooldown-icon{font-size:1.3rem;flex-shrink:0}
+.cooldown-text{flex:1}
+.cooldown-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;color:#fff;margin-bottom:2px}
+.cooldown-sub{font-size:.7rem;color:var(--gray-400)}
+.cooldown-timer{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--sun);flex-shrink:0;min-width:40px;text-align:right}
+.char-counter{font-size:.68rem;color:var(--gray-400);text-align:right;margin-top:3px}
+.char-counter.warn{color:var(--orange)}.char-counter.over{color:var(--red);font-weight:700}
+.spam-warning{background:var(--red-light);border:1.5px solid #FCA5A5;border-radius:8px;padding:8px 12px;font-size:.75rem;color:#7F1D1D;margin-top:6px;display:none}
+.spam-warning.show{display:block}
+
+/* ── CALC SHOP LINKS ── */
+.calc-shop-card{background:#fff;border-radius:var(--card-radius);border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:10px}
+.calc-shop-head{background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:12px 16px;display:flex;align-items:center;gap:10px}
+.calc-shop-head-icon{font-size:1.1rem;flex-shrink:0}
+.calc-shop-head-text{font-family:'Syne',sans-serif;font-weight:800;font-size:.88rem;color:#fff;flex:1}
+.calc-shop-head-sub{font-size:.7rem;color:var(--gray-400)}
+.calc-shop-item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background .15s;text-decoration:none}
+.calc-shop-item:last-child{border-bottom:none}
+.calc-shop-item:hover{background:var(--gray-100)}
+.csi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.csi-body{flex:1;min-width:0}
+.csi-label{font-size:.68rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em}
+.csi-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.83rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.csi-meta{font-size:.7rem;color:var(--text-sub);margin-top:1px}
+.csi-arrow{color:var(--sun);font-size:.95rem;flex-shrink:0}
+.csi-price{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;color:var(--sun-deep);white-space:nowrap}
+
+/* ── BRAND RATINGS ── */
+.brand-cat-card{background:#fff;border-radius:var(--card-radius);border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:10px}
+.brand-cat-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer}
+.brand-cat-header-left{display:flex;align-items:center;gap:10px}
+.brand-cat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.bci-inverter{background:linear-gradient(135deg,var(--purple-light),#DDD6FE)}
+.bci-scc{background:linear-gradient(135deg,var(--sky-light),#BAE6FD)}
+.bci-panel{background:linear-gradient(135deg,#FEF3C7,#FDE68A)}
+.bci-battery{background:linear-gradient(135deg,var(--green-light),#A7F3D0)}
+.bci-breaker{background:linear-gradient(135deg,var(--red-light),#FCA5A5)}
+.bci-bms{background:linear-gradient(135deg,var(--orange-light),#FED7AA)}
+.brand-cat-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text-main)}
+.brand-cat-sub{font-size:.72rem;color:var(--text-sub);margin-top:1px}
+.brand-cat-toggle{font-size:.9rem;color:var(--gray-400);transition:transform .2s}
+.brand-cat-toggle.open{transform:rotate(180deg)}
+.brand-cat-body{display:none;padding:0 14px 14px}
+.brand-cat-body.open{display:block}
+
+/* Brand list */
+.brand-add-row{display:flex;gap:8px;margin-bottom:12px}
+.brand-add-input{flex:1;padding:8px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.82rem;color:var(--text-main);outline:none}
+.brand-add-input:focus{border-color:var(--sun)}
+.brand-add-btn{padding:8px 14px;background:var(--navy);color:#fff;border-radius:8px;font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;white-space:nowrap}
+
+.brand-list{display:flex;flex-direction:column;gap:8px}
+.brand-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray-100);border-radius:10px;transition:background .18s}
+.brand-item:hover{background:var(--gray-200)}
+.brand-rank{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:var(--text-sub);width:24px;text-align:center;flex-shrink:0}
+.brand-rank.top1{color:var(--sun)}
+.brand-rank.top2{color:var(--gray-400)}
+.brand-rank.top3{color:#CD7F32}
+.brand-info{flex:1;min-width:0}
+.brand-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--text-main)}
+.brand-votes{font-size:.72rem;color:var(--text-sub)}
+.brand-bar-wrap{flex:1;height:6px;background:var(--gray-200);border-radius:99px;overflow:hidden}
+.brand-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sun),var(--sun-deep));transition:width .4s ease}
+.brand-vote-btn{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;transition:all .18s;flex-shrink:0;border:1.5px solid transparent}
+.brand-vote-btn.unvoted{background:#fff;border-color:var(--gray-200);color:var(--gray-500)}
+.brand-vote-btn.unvoted:hover{border-color:var(--sun);color:var(--sun-deep)}
+.brand-vote-btn.voted{background:var(--sun);color:var(--navy);border-color:var(--sun)}
+.brand-medal{font-size:1rem}
+
+/* ── ADMIN ── */
+#page-admin{background:var(--off-white);padding-bottom:100px}
+.admin-login-wrap{max-width:520px;margin:0 auto;padding:20px 16px}
+.admin-login-card{background:#fff;border-radius:var(--card-radius);padding:32px 24px;box-shadow:var(--shadow-md);border:1.5px solid var(--gray-200);text-align:center}
+.admin-login-icon{font-size:2.5rem;margin-bottom:12px}
+.admin-login-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--text-main);margin-bottom:6px}
+.admin-login-sub{font-size:.82rem;color:var(--text-sub);margin-bottom:24px}
+.admin-input-group{margin-bottom:14px;text-align:left}
+.admin-input-group label{display:block;font-size:.78rem;font-weight:600;color:var(--text-sub);margin-bottom:5px}
+.admin-input{width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:10px;font-size:.88rem;color:var(--text-main);background:#fff;outline:none;transition:border-color .2s}
+.admin-input:focus{border-color:var(--sun);box-shadow:var(--shadow-glow)}
+.btn-admin-login{width:100%;padding:12px;background:var(--navy);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;border-radius:10px;transition:background .2s;margin-top:6px}
+.btn-admin-login:hover{background:var(--navy-soft)}
+.admin-hint{font-size:.72rem;color:var(--gray-400);margin-top:10px}
+.admin-panel{max-width:520px;margin:0 auto;padding:0 16px}
+.admin-tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--gray-100);border-radius:10px;padding:4px}
+.admin-tab{flex:1;padding:9px;border-radius:7px;font-family:'Syne',sans-serif;font-weight:600;font-size:.72rem;color:var(--gray-500);transition:all .18s;text-align:center}
+.admin-tab.active{background:#fff;color:var(--navy);box-shadow:var(--shadow-sm)}
+.admin-tab-content{display:none}.admin-tab-content.active{display:block}
+.admin-form-card{background:#fff;border-radius:var(--card-radius);padding:18px;box-shadow:var(--shadow-sm);border:1.5px solid var(--gray-200);margin-bottom:12px}
+.admin-form-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:var(--text-main);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.form-group{margin-bottom:10px}
+.form-group label{display:block;font-size:.73rem;font-weight:600;color:var(--text-sub);margin-bottom:4px}
+.form-input{width:100%;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.84rem;color:var(--text-main);background:#fff;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--sun)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn-save{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--sun);color:var(--navy);border-radius:8px;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem}
+.btn-sm{padding:6px 12px;border-radius:7px;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem}
+.btn-sky{background:var(--sky-light);color:var(--sky)}
+.btn-sky:hover{background:var(--sky);color:#fff}
+.btn-danger{background:var(--red-light);color:var(--red)}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-green{background:var(--green-light);color:var(--green)}
+.btn-green:hover{background:var(--green);color:#fff}
+.admin-list-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-100)}
+.admin-list-item:last-child{border-bottom:none}
+.admin-list-info{flex:1;min-width:0}
+.admin-list-name{font-weight:600;font-size:.84rem;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-list-sub{font-size:.72rem;color:var(--text-sub)}
+.admin-list-actions{display:flex;gap:5px;flex-shrink:0}
+
+/* Group Edit Panel */
+.group-edit-panel{background:var(--sky-light);border:1.5px solid #BAE6FD;border-radius:12px;padding:14px;margin-top:10px;display:none}
+.group-edit-panel.show{display:block}
+.group-edit-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;color:#0C4A6E;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.group-edit-close{cursor:pointer;font-size:.9rem;color:var(--sky)}
+
+/* Product picker for groups */
+.product-picker{border:1.5px solid var(--gray-200);border-radius:8px;max-height:200px;overflow-y:auto;margin-top:6px}
+.product-picker-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background .15s}
+.product-picker-item:last-child{border-bottom:none}
+.product-picker-item:hover{background:var(--gray-100)}
+.product-picker-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--sun);flex-shrink:0}
+.product-picker-info{flex:1;min-width:0}
+.product-picker-name{font-size:.82rem;font-weight:600;color:var(--text-main)}
+.product-picker-price{font-size:.7rem;color:var(--text-sub)}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat-card{background:#fff;border-radius:12px;padding:14px;box-shadow:var(--shadow-sm);border:1.5px solid var(--gray-200)}
+.stat-card-num{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--sun);line-height:1;margin-bottom:3px}
+.stat-card-label{font-size:.73rem;color:var(--text-sub)}
+
+/* SHARE MODAL */
+#share-modal{position:fixed;inset:0;z-index:200;display:none;align-items:flex-end;justify-content:center}
+#share-modal.open{display:flex}
+.modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
+.modal-sheet{position:relative;z-index:1;background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:520px;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:var(--gray-200);border-radius:99px;margin:0 auto 20px}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--text-main);margin-bottom:6px}
+.modal-sub{font-size:.82rem;color:var(--text-sub);margin-bottom:16px}
+.share-link-box{display:flex;gap:8px;margin-bottom:20px}
+.share-link-input{flex:1;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.78rem;color:var(--text-sub);background:var(--gray-100);outline:none}
+.btn-copy{padding:10px 16px;background:var(--navy);color:#fff;border-radius:8px;font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;white-space:nowrap}
+.share-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.share-option-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:12px;border:1.5px solid var(--gray-200);font-size:.72rem;font-weight:600;color:var(--text-sub);transition:all .18s;background:#fff}
+.share-option-btn:hover{border-color:var(--sun);color:var(--sun-deep)}
+.share-option-icon{font-size:1.4rem}
+
+/* TOAST */
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:99px;font-size:.82rem;font-weight:600;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;border:1px solid rgba(255,255,255,.1);z-index:999}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* BOTTOM NAV */
+#bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:80;background:#fff;border-top:1px solid var(--gray-200);padding:8px 0 max(8px,env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.bottom-nav-inner{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-around}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;border-radius:8px;transition:all .18s;min-width:56px;cursor:pointer}
+.nav-item .nav-icon{font-size:1.25rem;transition:transform .2s}
+.nav-item .nav-label{font-size:.6rem;font-weight:600;color:var(--gray-400);transition:color .18s}
+.nav-item.active .nav-label{color:var(--sun-deep)}.nav-item.active .nav-icon{transform:scale(1.1)}
+.nav-item .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--sun);opacity:0;transition:opacity .2s;margin-top:-2px}
+.nav-item.active .nav-dot{opacity:1}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--gray-400)}
+.empty-state-icon{font-size:2.8rem;margin-bottom:10px}
+.empty-state-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;color:var(--text-sub);margin-bottom:5px}
+.empty-state-sub{font-size:.8rem;line-height:1.5}
+
+.stagger>*{opacity:0;animation:fadeUp .4s ease forwards}
+.stagger>*:nth-child(1){animation-delay:.05s}.stagger>*:nth-child(2){animation-delay:.10s}
+.stagger>*:nth-child(3){animation-delay:.15s}.stagger>*:nth-child(4){animation-delay:.20s}
+.stagger>*:nth-child(5){animation-delay:.25s}.stagger>*:nth-child(6){animation-delay:.30s}
+@keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(245,158,11,.4)}70%{box-shadow:0 0 0 12px rgba(245,158,11,0)}100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}}
+.pulse{animation:pulse-ring 2s ease infinite}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:99px}
+@media(min-width:640px){.products-list{display:grid;grid-template-columns:1fr 1fr}.stats-grid{grid-template-columns:repeat(4,1fr)}.hero-title{font-size:2.5rem}}
+</style>
+</head>
+<body>
+
+<header id="app-header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">☀️</div>
+      <div class="logo-text">Solar<span>Pinas</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="navigate('calculator')" title="Calc">⚡</button>
+      <button class="icon-btn" onclick="navigate('community')" title="Community">💬</button>
+      <button class="icon-btn" onclick="navigate('admin')" title="Admin">🔧</button>
+    </div>
+  </div>
+</header>
+<div id="breadcrumb-bar"><div class="breadcrumb-inner" id="breadcrumb-items"></div></div>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🇵🇭 Philippine Solar Guide</div>
+    <h1 class="hero-title">Find Your Perfect<br><span class="accent">Solar Setup</span></h1>
+    <p class="hero-subtitle">Compare systems, calculate your load, and buy from Shopee &amp; Lazada — all in one place.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-products">—</div><div class="hero-stat-label">Products</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-setups">—</div><div class="hero-stat-label">Setups</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-posts">—</div><div class="hero-stat-label">Forum Posts</div></div>
+    </div>
+    <button class="btn-primary pulse" onclick="navigate('categories')">🔍 Browse Solar Setups</button>
+    <button class="btn-secondary" onclick="navigate('calculator')">⚡ Calculate My Power Needs</button>
+    <div class="hero-tools">
+      <div class="tool-card" onclick="navigate('community')"><div class="tool-card-icon">💬</div><div class="tool-card-title">Community</div><div class="tool-card-sub">Ask questions, share tips</div></div>
+      <div class="tool-card" onclick="navigate('community');setTimeout(()=>switchCommTab('brands'),200)"><div class="tool-card-icon">⭐</div><div class="tool-card-title">Brand Ratings</div><div class="tool-card-sub">Top PH solar brands</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="page" id="page-categories">
+  <div class="section-header"><h2 class="section-title">Choose a Category</h2><p class="section-sub">Select the type of solar solution you need</p></div>
+  <div class="category-grid stagger" id="category-list"></div>
+</div>
+
+<!-- GROUPS -->
+<div class="page" id="page-groups">
+  <div class="section-header"><h2 class="section-title" id="group-page-title">Choose a Setup</h2><p class="section-sub" id="group-page-sub">Pick the setup that fits your needs</p></div>
+  <div class="group-grid stagger" id="group-list"></div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="page" id="page-products">
+  <div class="section-header"><h2 class="section-title" id="product-page-title">Recommended Products</h2><p class="section-sub" id="product-page-sub">Click any product to view on Shopee or Lazada</p></div>
+  <div class="products-list stagger" id="product-list"></div>
+</div>
+
+<!-- CALCULATOR (same structure as v2) -->
+<div class="page" id="page-calculator">
+  <div class="section-header"><h2 class="section-title">⚡ Power Calculator</h2><p class="section-sub">Add appliances per time period — get full DIY component sizing</p></div>
+  <div class="calc-wrap">
+    <div class="calc-config">
+      <div class="calc-config-title">⚙️ System Settings</div>
+      <div class="config-grid">
+        <div class="config-item"><label>Battery Type</label><select class="config-select" id="cfg-bat-type" onchange="runCalculation()"><option value="lifepo4">LiFePO4 Lithium</option><option value="agm">AGM / Lead Acid</option><option value="gel">Gel Battery</option></select></div>
+        <div class="config-item"><label>Days of Autonomy</label><select class="config-select" id="cfg-autonomy" onchange="runCalculation()"><option value="1">1 day</option><option value="2" selected>2 days</option><option value="3">3 days</option></select></div>
+        <div class="config-item"><label>Panel Wattage</label><select class="config-select" id="cfg-panel-w" onchange="runCalculation()"><option value="100">100W</option><option value="200">200W</option><option value="400" selected>400W</option><option value="550">550W</option></select></div>
+        <div class="config-item"><label>Sun Hours</label><select class="config-select" id="cfg-sun-hrs" onchange="runCalculation()"><option value="4">Mindanao (4h)</option><option value="5" selected>Luzon/Visayas (5h)</option><option value="6">NCR Summer (6h)</option></select></div>
+      </div>
+    </div>
+    <div class="period-tabs">
+      <div class="period-tab day active" id="tab-day" onclick="switchPeriod('day')">☀️ Daytime</div>
+      <div class="period-tab night" id="tab-night" onclick="switchPeriod('night')">🌙 Nighttime</div>
+    </div>
+    <div id="section-day">
+      <div class="preset-scroll"><div class="preset-chips" id="presets-day"></div></div>
+      <div class="calc-appliance-list" id="list-day"></div>
+      <div id="custom-form-day" class="custom-add-form">
+        <div class="custom-form-row"><input type="text" class="custom-input" id="custom-name-day" placeholder="Appliance name"><input type="number" class="custom-input" id="custom-watts-day" placeholder="Watts"></div>
+        <div class="custom-form-actions"><button class="btn-add-custom" onclick="addCustomAppliance('day')">➕ Add</button><button class="btn-cancel-custom" onclick="toggleCustomForm('day')">Cancel</button></div>
+      </div>
+      <button class="add-custom-btn" onclick="toggleCustomForm('day')">➕ Add Custom Appliance</button>
+    </div>
+    <div id="section-night" style="display:none">
+      <div class="preset-scroll"><div class="preset-chips" id="presets-night"></div></div>
+      <div class="calc-appliance-list" id="list-night"></div>
+      <div id="custom-form-night" class="custom-add-form">
+        <div class="custom-form-row"><input type="text" class="custom-input" id="custom-name-night" placeholder="Appliance name"><input type="number" class="custom-input" id="custom-watts-night" placeholder="Watts"></div>
+        <div class="custom-form-actions"><button class="btn-add-custom" onclick="addCustomAppliance('night')">➕ Add</button><button class="btn-cancel-custom" onclick="toggleCustomForm('night')">Cancel</button></div>
+      </div>
+      <button class="add-custom-btn" onclick="toggleCustomForm('night')">➕ Add Custom Appliance</button>
+    </div>
+    <div style="height:14px"></div>
+    <div class="calc-summary-bar">
+      <div><div class="sum-val day" id="sum-day-wh">0 Wh</div><div class="sum-label">☀️ Daytime</div></div>
+      <div><div class="sum-val night" id="sum-night-wh">0 Wh</div><div class="sum-label">🌙 Nighttime</div></div>
+      <div><div class="sum-val total" id="sum-total-wh">0 Wh</div><div class="sum-label">⚡ Total</div></div>
+    </div>
+    <div id="calc-results" style="display:none">
+      <div class="result-section"><div class="result-card"><div class="result-card-header" onclick="toggleResult('battery')"><div class="result-card-header-left"><div class="result-header-icon rc-battery">🔋</div><div><div class="result-header-title">Battery System</div><div class="result-header-sub" id="rh-battery">—</div></div></div><div class="result-toggle open" id="tog-battery">▼</div></div><div class="result-card-body open" id="rb-battery"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div class="battery-voltage-badge" id="bat-voltage-badge">24V</div><div id="bat-voltage-reason" style="font-size:.75rem;color:var(--text-sub);line-height:1.4;flex:1"></div></div><div class="battery-compare"><div class="battery-type-card leadacid"><div class="battery-type-name">Lead Acid/AGM</div><div class="battery-type-ah" id="bat-la-ah">—</div><div class="battery-type-unit">Ah needed</div><div class="battery-type-cost" id="bat-la-cost">—</div><div style="font-size:.68rem;color:var(--gray-400);margin-top:3px">50% DoD</div></div><div class="battery-type-card lithium"><div class="battery-type-name">LiFePO4 Lithium</div><div class="battery-type-ah" id="bat-li-ah">—</div><div class="battery-type-unit">Ah needed</div><div class="battery-type-cost" id="bat-li-cost">—</div><span class="battery-type-rec">RECOMMENDED</span></div></div><div class="spec-row"><span class="spec-label">🌙 Night load</span><span class="spec-val highlight" id="bat-night-wh">—</span></div><div class="spec-row"><span class="spec-label">📅 Autonomy</span><span class="spec-val" id="bat-days">—</span></div><div class="info-box" id="bat-info-box"></div></div></div></div>
+      <div class="result-section"><div class="result-card"><div class="result-card-header" onclick="toggleResult('panel')"><div class="result-card-header-left"><div class="result-header-icon rc-panel">☀️</div><div><div class="result-header-title">Solar Panels</div><div class="result-header-sub" id="rh-panel">—</div></div></div><div class="result-toggle open" id="tog-panel">▼</div></div><div class="result-card-body open" id="rb-panel"><div class="spec-row"><span class="spec-label">🔢 Panels needed</span><span class="spec-val highlight" id="pan-count">—</span></div><div class="spec-row"><span class="spec-label">⚡ Each wattage</span><span class="spec-val" id="pan-each-w">—</span></div><div class="spec-row"><span class="spec-label">📐 Total array</span><span class="spec-val" id="pan-total-w">—</span></div><div class="spec-row"><span class="spec-label">🔗 Wiring</span><span class="spec-val green" id="pan-wiring">—</span></div><div class="spec-row"><span class="spec-label">🔌 String Voc</span><span class="spec-val blue" id="pan-voc">—</span></div><div class="info-box" id="pan-info-box"></div></div></div></div>
+      <div class="result-section"><div class="result-card"><div class="result-card-header" onclick="toggleResult('scc')"><div class="result-card-header-left"><div class="result-header-icon rc-scc">🔆</div><div><div class="result-header-title">Solar Charge Controller</div><div class="result-header-sub" id="rh-scc">—</div></div></div><div class="result-toggle open" id="tog-scc">▼</div></div><div class="result-card-body open" id="rb-scc"><div class="spec-row"><span class="spec-label">⚡ SCC Ampere</span><span class="spec-val highlight" id="scc-amp">—</span></div><div class="spec-row"><span class="spec-label">🔋 System voltage</span><span class="spec-val" id="scc-voltage">—</span></div><div class="spec-row"><span class="spec-label">📡 Max PV voltage</span><span class="spec-val blue" id="scc-maxv">—</span></div><div class="spec-row"><span class="spec-label">📊 Type</span><span class="spec-val green" id="scc-type">MPPT</span></div><div class="spec-row"><span class="spec-label">💡 Example model</span><span class="spec-val" id="scc-model">—</span></div><div class="info-box">💡 <strong>MPPT vs PWM:</strong> Always use MPPT — extracts 25–30% more energy. PWM only works if panel Vmp exactly matches system voltage.</div></div></div></div>
+      <div class="result-section"><div class="result-card"><div class="result-card-header" onclick="toggleResult('inverter')"><div class="result-card-header-left"><div class="result-header-icon rc-inverter">🔌</div><div><div class="result-header-title">Inverter</div><div class="result-header-sub" id="rh-inverter">—</div></div></div><div class="result-toggle open" id="tog-inverter">▼</div></div><div class="result-card-body open" id="rb-inverter"><div class="spec-row"><span class="spec-label">⚡ Size</span><span class="spec-val highlight" id="inv-size">—</span></div><div class="spec-row"><span class="spec-label">🔋 DC input</span><span class="spec-val" id="inv-dcv">—</span></div><div class="spec-row"><span class="spec-label">🏠 AC output</span><span class="spec-val green">220V 60Hz</span></div><div class="spec-row"><span class="spec-label">📊 Type</span><span class="spec-val blue">Pure Sine Wave</span></div><div class="spec-row"><span class="spec-label">🚀 Surge capacity</span><span class="spec-val" id="inv-surge">—</span></div><div class="info-box warning">⚠️ <strong>Always Pure Sine Wave</strong> for motors, fridges, AC, and sensitive electronics. Modified sine wave causes damage.</div></div></div></div>
+      <div class="result-section"><div class="result-card"><div class="result-card-header" onclick="toggleResult('dcbreak')"><div class="result-card-header-left"><div class="result-header-icon rc-dcbreaker">🔴</div><div><div class="result-header-title">DC Breakers &amp; Fuses</div><div class="result-header-sub">Battery, SCC, and panel protection</div></div></div><div class="result-toggle" id="tog-dcbreak">▼</div></div><div class="result-card-body" id="rb-dcbreak"><div class="spec-row"><span class="spec-label">🔋→SCC (DC MCB)</span><span class="spec-val red" id="dc-bat-scc">—</span></div><div class="spec-row"><span class="spec-label">🔋→Inverter (DC MCB)</span><span class="spec-val red" id="dc-bat-inv">—</span></div><div class="spec-row"><span class="spec-label">☀️ Panel string fuse</span><span class="spec-val" id="dc-panel-fuse">—</span></div><div class="spec-row"><span class="spec-label">🔒 Main DC disconnect</span><span class="spec-val" id="dc-main-disc">—</span></div><div class="info-box warning">🚨 <strong>Fuse within 18 inches of battery terminal.</strong> Never skip this — prevents short-circuit fires.</div></div></div></div>
+      <div class="result-section"><div class="result-card"><div class="result-card-header" onclick="toggleResult('acbreak')"><div class="result-card-header-left"><div class="result-header-icon rc-acbreaker">🟡</div><div><div class="result-header-title">AC Breakers (MCB)</div><div class="result-header-sub">Inverter output protection</div></div></div><div class="result-toggle" id="tog-acbreak">▼</div></div><div class="result-card-body" id="rb-acbreak"><div class="spec-row"><span class="spec-label">🏠 Main output MCB</span><span class="spec-val highlight" id="ac-main-mcb">—</span></div><div class="spec-row"><span class="spec-label">💡 Lighting circuit</span><span class="spec-val green">10A – 16A</span></div><div class="spec-row"><span class="spec-label">🔌 Outlet circuit</span><span class="spec-val green">20A</span></div><div class="spec-row"><span class="spec-label">❄️ AC/heavy load</span><span class="spec-val green">20A – 32A</span></div><div class="info-box">💡 Use a sub-panel with individual breakers per circuit for easier troubleshooting.</div></div></div></div>
+      <div class="result-section"><div class="result-card"><div class="result-card-header" onclick="toggleResult('wire')"><div class="result-card-header-left"><div class="result-header-icon rc-wire">🔵</div><div><div class="result-header-title">Wire Size Guide</div><div class="result-header-sub">AWG / mm² per segment</div></div></div><div class="result-toggle" id="tog-wire">▼</div></div><div class="result-card-body" id="rb-wire"><div class="spec-row"><span class="spec-label">☀️ Panel to SCC</span><span class="spec-val blue" id="wg-panel-scc">—</span></div><div class="spec-row"><span class="spec-label">⚡ SCC to Battery</span><span class="spec-val blue" id="wg-scc-bat">—</span></div><div class="spec-row"><span class="spec-label">🔌 Battery to Inverter</span><span class="spec-val red" id="wg-bat-inv">—</span></div><div class="spec-row"><span class="spec-label">🏠 Inverter to AC panel</span><span class="spec-val green" id="wg-inv-ac">—</span></div><div style="margin-top:10px;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:var(--text-sub);margin-bottom:6px">FULL REFERENCE TABLE</div><table class="wire-table" id="wire-ref-table"></table><div class="info-box" style="margin-top:10px">📏 Keep battery-to-inverter cable <strong>under 1 meter</strong>. Use flexible stranded copper wire, never solid core.</div></div></div></div>
+      <div class="result-section"><div class="result-card"><div class="result-card-header" onclick="toggleResult('tips')"><div class="result-card-header-left"><div class="result-header-icon rc-tips">💡</div><div><div class="result-header-title">DIY Newbie Tips</div><div class="result-header-sub">Essential safety &amp; setup advice</div></div></div><div class="result-toggle" id="tog-tips">▼</div></div><div class="result-card-body" id="rb-tips"><div class="tip-item"><div class="tip-icon">🔴</div><div class="tip-text"><strong>Fuse within 18 inches of battery</strong> — install on every positive wire leaving the battery. Prevents short-circuit fires.</div></div><div class="tip-item"><div class="tip-icon">🔌</div><div class="tip-text"><strong>Use proper lugs</strong> — crimp copper ring terminals. Loose connections cause heat, voltage drop, and fire.</div></div><div class="tip-item"><div class="tip-icon">⚡</div><div class="tip-text"><strong>Wire battery LAST</strong> — connect all components first, then the battery, to prevent accidental shorts.</div></div><div class="tip-item"><div class="tip-icon">🌡️</div><div class="tip-text"><strong>Batteries hate heat</strong> — keep in a cool, ventilated area. LiFePO4 is safer but still prefers cool temps.</div></div><div class="tip-item"><div class="tip-icon">☀️</div><div class="tip-text"><strong>Tilt panels 15–20°</strong> facing true south for best year-round output in PH (latitude 5°–20°N).</div></div><div class="tip-item"><div class="tip-icon">📊</div><div class="tip-text"><strong>Oversize panels by 20–30%</strong> — real conditions (heat, dust, clouds) reduce output significantly.</div></div><div class="tip-item"><div class="tip-icon">🔗</div><div class="tip-text"><strong>Series = higher V, same A. Parallel = same V, higher A.</strong> Higher voltage strings need thinner wire.</div></div><div class="tip-item"><div class="tip-icon">🔋</div><div class="tip-text"><strong>Never mix old and new batteries</strong> in a bank. Use matched brand, age, and capacity always.</div></div><div class="tip-item"><div class="tip-icon">📱</div><div class="tip-text"><strong>Get a battery monitor</strong> — don't guess state of charge. A BMS display prevents deep discharge damage.</div></div><div class="tip-item"><div class="tip-icon">🌧️</div><div class="tip-text"><strong>Plan for 3 cloudy days</strong> in rainy season (July–Sept). Don't size too lean for typhoon season.</div></div></div></div></div>
+      <div style="margin-top:6px;margin-bottom:14px"><button class="btn-primary" onclick="navigate('categories')">🔍 Browse All Setups on Shopee/Lazada</button></div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;color:var(--text-sub);letter-spacing:.04em;margin-bottom:8px;display:flex;align-items:center;gap:6px">🛒 SHOP BY COMPONENT — Based on your calculation</div>
+      <div id="calc-shop-links" style="margin-bottom:20px"></div>
+    </div>
+  </div>
+  <div style="position:sticky;bottom:62px;padding:10px 16px;max-width:520px;margin:0 auto">
+    <button class="calc-run-btn" onclick="runCalculation()">⚡ Calculate My System</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     COMMUNITY PAGE
+============================================================ -->
+<div class="page" id="page-community">
+  <div class="section-header">
+    <h2 class="section-title">💬 Solar Community</h2>
+    <p class="section-sub">Ask questions, share builds, and rate the best Philippine solar brands</p>
+  </div>
+  <div class="community-wrap">
+    <div class="comm-tabs">
+      <div class="comm-tab active" id="ctab-forum" onclick="switchCommTab('forum')">🧵 Forum</div>
+      <div class="comm-tab" id="ctab-brands" onclick="switchCommTab('brands')">⭐ Brand Ratings</div>
+    </div>
+
+    <!-- FORUM TAB -->
+    <div class="comm-tab-content active" id="ctab-content-forum">
+      <div id="community-list-view">
+        <div class="post-btn-wrap">
+          <button class="post-question-btn" onclick="showNewPostForm()">
+            <div class="post-q-avatar">👤</div>
+            <span class="post-q-placeholder">Ask a question or share your solar build... 🔆</span>
+          </button>
+        </div>
+        <div id="new-post-form-wrap" class="new-post-form">
+          <div class="nf-title">📝 New Post</div>
+          <div id="post-cooldown-banner" class="cooldown-banner">
+            <div class="cooldown-icon">⏳</div>
+            <div class="cooldown-text">
+              <div class="cooldown-title">Slow down a bit!</div>
+              <div class="cooldown-sub">You can post again in</div>
+            </div>
+            <div class="cooldown-timer" id="post-cooldown-timer">5:00</div>
+          </div>
+          <div class="nf-row"><label>Your Name <span style="color:var(--gray-400);font-weight:400">(2–30 chars, letters only)</span></label><input type="text" class="nf-input" id="nf-name" placeholder="e.g. Juan dela Cruz" maxlength="30" oninput="validateName(this)"></div>
+          <div class="nf-row"><label>Title <span style="color:var(--gray-400);font-weight:400">(10–150 chars)</span></label><input type="text" class="nf-input" id="nf-title" placeholder="e.g. Best inverter for 1HP aircon?" maxlength="150" oninput="updateCharCounter('nf-title','tc-title',150)"><div class="char-counter" id="tc-title">0 / 150</div></div>
+          <div class="nf-row"><label>Details <span style="color:var(--gray-400);font-weight:400">(min 20 chars, max 2000)</span></label><textarea class="nf-input" id="nf-body" placeholder="Describe your question or share your build details..." maxlength="2000" oninput="updateCharCounter('nf-body','tc-body',2000)"></textarea><div class="char-counter" id="tc-body">0 / 2000</div></div>
+          <div id="spam-warn-post" class="spam-warning">⚠️ Your message looks like spam. Please write a genuine solar-related post.</div>
+          <div class="nf-row"><label>Tag</label>
+            <div class="nf-tags-row">
+              <div class="nf-tag-chip selected" data-tag="question" onclick="selectPostTag(this)">❓ Question</div>
+              <div class="nf-tag-chip" data-tag="tip" onclick="selectPostTag(this)">💡 Tip/Guide</div>
+              <div class="nf-tag-chip" data-tag="review" onclick="selectPostTag(this)">⭐ Review</div>
+              <div class="nf-tag-chip" data-tag="build" onclick="selectPostTag(this)">🔧 Build Log</div>
+              <div class="nf-tag-chip" data-tag="warning" onclick="selectPostTag(this)">⚠️ Warning</div>
+            </div>
+          </div>
+          <div class="captcha-box">
+            <div class="captcha-question">🔒 Prove you're human: <span id="post-captcha-q">loading…</span></div>
+            <div class="captcha-row">
+              <input type="number" class="captcha-input" id="post-captcha-ans" placeholder="?">
+              <span class="captcha-hint">Max 3 posts/hr · 5-min cooldown between posts</span>
+            </div>
+          </div>
+          <div class="nf-actions">
+            <button class="nf-submit-btn" onclick="submitPost()">🚀 Post</button>
+            <button class="nf-cancel-btn" onclick="hideNewPostForm()">Cancel</button>
+          </div>
+        </div>
+        <div class="thread-filter-row" id="thread-filters"></div>
+        <div id="thread-list"></div>
+      </div>
+      <div id="thread-detail-view">
+        <div class="thread-detail-back" onclick="closeThreadDetail()">← Back to Forum</div>
+        <div id="thread-detail-inner"></div>
+      </div>
+    </div>
+
+    <!-- BRANDS TAB -->
+    <div class="comm-tab-content" id="ctab-content-brands">
+      <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:14px;padding:16px;margin-bottom:14px;color:#fff">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:4px">🏆 Rate Solar Brands</div>
+        <div style="font-size:.78rem;color:var(--gray-400);line-height:1.5">Vote for the best brands available in the Philippines per category. Help other DIYers make better buying decisions.</div>
+      </div>
+      <div id="brand-ratings-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="page-admin">
+  <div id="admin-login-section"></div>
+  <div id="admin-panel-section" style="display:none"></div>
+</div>
+
+<!-- TOTAL BAR -->
+<div id="total-bar">
+  <div class="total-bar-inner">
+    <div><div class="total-label">ESTIMATED SETUP COST</div><div class="total-amount" id="total-amount-display">₱0</div><div class="total-count" id="total-count-display">0 products</div></div>
+    <button class="total-share-btn" onclick="openShareModal()">📤 Share</button>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div id="share-modal">
+  <div class="modal-backdrop" onclick="closeShareModal()"></div>
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📤 Share This Setup</div>
+    <div class="modal-sub" id="share-modal-sub">Share this solar setup with others</div>
+    <div class="share-link-box"><input type="text" class="share-link-input" id="share-link-value" readonly><button class="btn-copy" onclick="copyShareLink()">Copy</button></div>
+    <div class="share-options">
+      <button class="share-option-btn" onclick="shareViaPlatform('messenger')"><span class="share-option-icon">💬</span>Messenger</button>
+      <button class="share-option-btn" onclick="shareViaPlatform('viber')"><span class="share-option-icon">📱</span>Viber</button>
+      <button class="share-option-btn" onclick="shareViaPlatform('native')"><span class="share-option-icon">🔗</span>More</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<nav id="bottom-nav">
+  <div class="bottom-nav-inner">
+    <div class="nav-item active" onclick="navigate('home')" data-page="home"><div class="nav-icon">🏠</div><div class="nav-label">Home</div><div class="nav-dot"></div></div>
+    <div class="nav-item" onclick="navigate('categories')" data-page="categories"><div class="nav-icon">☀️</div><div class="nav-label">Setups</div><div class="nav-dot"></div></div>
+    <div class="nav-item" onclick="navigate('calculator')" data-page="calculator"><div class="nav-icon">⚡</div><div class="nav-label">Calc</div><div class="nav-dot"></div></div>
+    <div class="nav-item" onclick="navigate('community')" data-page="community"><div class="nav-icon">💬</div><div class="nav-label">Community</div><div class="nav-dot"></div></div>
+    <div class="nav-item" onclick="navigate('admin')" data-page="admin"><div class="nav-icon">🔧</div><div class="nav-label">Admin</div><div class="nav-dot"></div></div>
+  </div>
+</nav>
+
+<script>
+/* ============================================================
+   DATABASE
+============================================================ */
+const DB={
+  CATEGORIES:'sp_categories', GROUPS:'sp_groups', PRODUCTS:'sp_products',
+  PRODUCT_GROUPS:'sp_pg', CLICK_LOGS:'sp_clicks',
+  THREADS:'sp_threads', REPLIES:'sp_replies',
+  BRAND_VOTES:'sp_brand_votes', BRANDS:'sp_brands'
+};
+const ADMIN_PASS='solar2024';
+
+const SEED_CATEGORIES=[
+  {id:1,name:'Solar Setup',icon:'☀️',description:'Complete home & business solar systems'},
+  {id:2,name:'Solar Lighting',icon:'💡',description:'Solar-powered lighting solutions'},
+  {id:3,name:'Emergency Backup',icon:'🔋',description:'Power backup systems for outages'},
+];
+const SEED_GROUPS=[
+  {id:1,category_id:1,name:'Budget Friendly',description:'Essential setup under ₱15,000. Lighting + charging.',icon:'💰',style:'budget',tags:['#LowBudget','#Starter']},
+  {id:2,category_id:1,name:'Mid-Range Setup',description:'Balanced performance. Supports small appliances.',icon:'⚡',style:'pro',tags:['#Expandable','#BestValue']},
+  {id:3,category_id:1,name:'Pro Setup',description:'Full home solar. Inverter AC, refrigerator.',icon:'🏆',style:'pro',tags:['#HeavyAppliance','#Premium']},
+  {id:4,category_id:2,name:'Outdoor Lighting',description:'Garden, driveway, and pathway solar lights.',icon:'🌿',style:'budget',tags:['#Outdoor']},
+  {id:5,category_id:3,name:'Emergency Pack',description:'Portable power station for blackouts.',icon:'🆘',style:'emergency',tags:['#Emergency','#Portable']},
+];
+const SEED_PRODUCTS=[
+  {id:1,name:'100W Mono Solar Panel',price:3500,description:'High efficiency 21% mono panel. Weatherproof.',tags:['#LowBudget'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:'BESTSELLER'},
+  {id:2,name:'200W Poly Solar Panel',price:5800,description:'Cost-effective 200W panel. Durable frame.',tags:['#MidRange'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:null},
+  {id:3,name:'400W PERC Solar Panel',price:9500,description:'Top-tier PERC for pro setups.',tags:['#Premium'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:'TOP RATED'},
+  {id:4,name:'30Ah LiFePO4 Battery 12V',price:4200,description:'Safe LiFePO4. 2000+ charge cycles.',tags:['#LongLife'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:null},
+  {id:5,name:'100Ah AGM Battery',price:6500,description:'Reliable AGM. Maintenance-free.',tags:['#Reliable'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:'POPULAR'},
+  {id:6,name:'200Ah LiFePO4 Battery',price:18500,description:'Premium lithium. 10-year lifespan.',tags:['#Premium'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:null},
+  {id:7,name:'1000W Pure Sine Inverter',price:3200,description:'Runs sensitive electronics. 1000W continuous.',tags:['#LowBudget'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:null},
+  {id:8,name:'3000W Hybrid Inverter-Charger',price:14500,description:'MPPT built-in. WiFi monitoring.',tags:['#Smart'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:'SMART'},
+  {id:9,name:'30A PWM Charge Controller',price:850,description:'Basic reliable PWM. For small setups.',tags:['#LowBudget'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:null},
+  {id:10,name:'40A MPPT Charge Controller',price:3800,description:'30% more energy than PWM. LCD display.',tags:['#Efficient'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:'EFFICIENT'},
+  {id:11,name:'Solar Garden Light x4',price:1200,description:'Auto on/off. IP65 waterproof.',tags:['#Outdoor'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:null},
+  {id:12,name:'500W Portable Power Station',price:12500,description:'All-in-one emergency unit.',tags:['#Emergency'],shopee_url:'https://shopee.ph',lazada_url:'https://lazada.com.ph',image:null,badge:'ALL-IN-ONE'},
+];
+const SEED_PG=[
+  {pid:1,gid:1},{pid:4,gid:1},{pid:7,gid:1},{pid:9,gid:1},
+  {pid:2,gid:2},{pid:5,gid:2},{pid:7,gid:2},{pid:10,gid:2},
+  {pid:3,gid:3},{pid:6,gid:3},{pid:8,gid:3},{pid:10,gid:3},
+  {pid:11,gid:4},{pid:1,gid:4},
+  {pid:12,gid:5},{pid:1,gid:5},{pid:4,gid:5},
+];
+
+const BRAND_CATS=[
+  {key:'inverter',label:'Inverter',icon:'🔌',cls:'bci-inverter',brands:['Growatt','Deye','Voltronic/Axpert','Solax','Sofar Solar','Solis','GoodWe','Victron Energy','Huawei','Mecer']},
+  {key:'scc',label:'Solar Charge Controller (SCC/MPPT)',icon:'🔆',cls:'bci-scc',brands:['Epever/Tracer','Renogy','Victron MPPT','PowMr','SRNE','Morningstar','Wellsee','Daly','Genasun','EASUN']},
+  {key:'panel',label:'Solar Panel',icon:'☀️',cls:'bci-panel',brands:['LONGi','JA Solar','Trina Solar','Jinko Solar','Canadian Solar','Astronergy','Risen Energy','SunPower','DMEGC','Seraphim']},
+  {key:'battery',label:'Battery',icon:'🔋',cls:'bci-battery',brands:['CATL (EVE cells)','Pylontech','Daly BMS','SOK Battery','Lifepower4','Ampere Time','Renogy LiFePO4','Wattkind','REPT','Dakota Lithium']},
+  {key:'breaker',label:'Breaker / ATS / MTS',icon:'⚡',cls:'bci-breaker',brands:['Schneider Electric','ABB','Siemens','Chint','Delixi','Eaton','Hager','LS Electric','Legrand','GEYA']},
+  {key:'bms',label:'BMS / Active Balancer',icon:'📊',cls:'bci-bms',brands:['JK BMS','Daly BMS','Ant BMS','Seplos','Heltec BMS','Overkill Solar','Xiaoxiang (Jiabaida)','SRNE BMS','REC BMS','NEEY Balancer']},
+];
+
+const SEED_THREADS=[
+  {id:1,author:'JuanSolar',color:'#2563EB',tag:'question',title:'Best inverter brand for 1HP aircon sa budget na ₱8,000?',body:'Planning to run 1HP inverter type aircon sa gabi. Budget ko mga ₱8,000 para sa inverter. Growatt ba or Deye ang mas reliable? May nagamit na ba dito sa forum?',votes:12,ts:Date.now()-86400000*2,replies:[]},
+  {id:2,author:'SolarManila',color:'#059669',tag:'tip',title:'💡 Tip: Bakit kailangan ng MPPT at hindi na lang PWM controller?',body:'Marami sa atin ang nagtatanong kung PWM o MPPT. Simple lang: MPPT extracts up to 30% more energy from your panels. If you have panels rated higher voltage than your battery (e.g. 36V panel, 12V battery), PWM wastes that extra voltage as heat. MPPT converts it to usable current. Always MPPT, lalo na sa modern 400W panels.',votes:24,ts:Date.now()-86400000*5,replies:[]},
+  {id:3,author:'VisayasDIY',color:'#7C3AED',tag:'build',title:'🔧 My 3kW off-grid build — Growatt SPF 3000TL + 4×200Ah LiFePO4',body:'Finished my build last month! 3×400W LONGi panels, Growatt SPF3000TL hybrid, 4 pieces 200Ah LiFePO4 cells with JK BMS in 24V config. Total budget: ₱85,000. Running ref, 3 fans, TV, and 3 hours of 1HP aircon daily. Total build time: 2 weekends.',votes:31,ts:Date.now()-86400000*7,replies:[]},
+  {id:4,author:'MinVoltage',color:'#DC2626',tag:'warning',title:'⚠️ Warning: Huwag gumamit ng undersized battery cable sa inverter!',body:'Nasunog ang aking inverter last week dahil ginamit ko 10AWG wire para sa 3000W inverter na dapat 2/0 AWG. Yung wire nag-heat up, natuklap ang insulation, at short circuit. Palaging tama ang wire gauge. Check the wire guide sa power calculator ng site na ito.',votes:18,ts:Date.now()-86400000*3,replies:[]},
+  {id:5,author:'NorCalSolar',color:'#D97706',tag:'review',title:'⭐ Epever 40A MPPT — Honest review after 6 months',body:'Been using the Epever XTRA4415N for 6 months now. Pros: Accurate readings, Bluetooth app works well, good build quality. Cons: App can disconnect sometimes. Overall: 4/5. Would recommend for mid-range setups. Paired with 2×400W panels and 100Ah LiFePO4.',votes:9,ts:Date.now()-86400000*10,replies:[]},
+];
+
+function dbGet(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(e){return null}}
+function dbSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function initDB(){
+  if(!dbGet(DB.CATEGORIES))dbSet(DB.CATEGORIES,SEED_CATEGORIES);
+  if(!dbGet(DB.GROUPS))dbSet(DB.GROUPS,SEED_GROUPS);
+  if(!dbGet(DB.PRODUCTS))dbSet(DB.PRODUCTS,SEED_PRODUCTS);
+  if(!dbGet(DB.PRODUCT_GROUPS))dbSet(DB.PRODUCT_GROUPS,SEED_PG);
+  if(!dbGet(DB.CLICK_LOGS))dbSet(DB.CLICK_LOGS,[]);
+  if(!dbGet(DB.THREADS))dbSet(DB.THREADS,SEED_THREADS);
+  if(!dbGet(DB.REPLIES))dbSet(DB.REPLIES,{});
+  if(!dbGet(DB.BRAND_VOTES))dbSet(DB.BRAND_VOTES,{});
+  if(!dbGet(DB.BRANDS)){
+    const b={};BRAND_CATS.forEach(c=>{b[c.key]=c.brands.map(n=>({name:n,votes:Math.floor(Math.random()*40+5)}))});
+    dbSet(DB.BRANDS,b);
+  }
+}
+
+function getCats(){return dbGet(DB.CATEGORIES)||[]}
+function getGroups(){return dbGet(DB.GROUPS)||[]}
+function getProducts(){return dbGet(DB.PRODUCTS)||[]}
+function getPG(){return dbGet(DB.PRODUCT_GROUPS)||[]}
+function getClicks(){return dbGet(DB.CLICK_LOGS)||[]}
+function getThreads(){return dbGet(DB.THREADS)||[]}
+function getReplies(){return dbGet(DB.REPLIES)||{}}
+function getBrandVotes(){return dbGet(DB.BRAND_VOTES)||{}}
+function getBrands(){return dbGet(DB.BRANDS)||{}}
+function getGroupsByCat(id){return getGroups().filter(g=>g.category_id==id)}
+function getProdsByGroup(gid){const ids=getPG().filter(x=>x.gid==gid).map(x=>x.pid);return getProducts().filter(p=>ids.includes(p.id))}
+function getGroupProdCount(gid){return getPG().filter(x=>x.gid==gid).length}
+function getGroupTotal(gid){return getProdsByGroup(gid).reduce((s,p)=>s+p.price,0)}
+function logClick(pid,platform,gid){const l=getClicks();l.push({pid,platform,gid,ts:Date.now()});dbSet(DB.CLICK_LOGS,l)}
+
+/* ============================================================
+   NAV
+============================================================ */
+const state={page:'home',cat:null,group:null};
+function navigate(page,extras={}){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
+  state.page=page;
+  document.getElementById('total-bar').classList.toggle('show',page==='products');
+  if(page==='home'){renderHome();updateBC([])}
+  else if(page==='categories'){renderCats();updateBC([{label:'Categories'}])}
+  else if(page==='groups'){state.cat=extras.cat||state.cat;renderGroups();updateBC([{label:'Categories',page:'categories'},{label:state.cat?.name||'Groups'}])}
+  else if(page==='products'){state.group=extras.group||state.group;renderProducts();updateBC([{label:'Categories',page:'categories'},{label:state.cat?.name||'Cat',page:'groups'},{label:state.group?.name||'Setup'}])}
+  else if(page==='calculator'){renderCalcPage();updateBC([{label:'Power Calculator'}])}
+  else if(page==='community'){renderCommunity();updateBC([{label:'Community'}])}
+  else if(page==='admin'){renderAdmin();updateBC([{label:'Admin'}])}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function updateBC(items){
+  const bar=document.getElementById('breadcrumb-bar'),c=document.getElementById('breadcrumb-items');
+  if(!items.length){bar.classList.remove('show');return}
+  bar.classList.add('show');c.innerHTML='';
+  [{label:'Home',page:'home'},...items].forEach((item,i,arr)=>{
+    const s=document.createElement('span');
+    s.className='bc-item'+(i===arr.length-1?' active':'')+(item.page?' clickable':'');
+    s.textContent=item.label;if(item.page)s.onclick=()=>navigate(item.page);c.appendChild(s);
+    if(i<arr.length-1){const sep=document.createElement('span');sep.className='bc-sep';sep.textContent='›';c.appendChild(sep)}
+  });
+}
+
+/* ============================================================
+   HOME
+============================================================ */
+function renderHome(){
+  document.getElementById('stat-products').textContent=getProducts().length;
+  document.getElementById('stat-setups').textContent=getGroups().length;
+  document.getElementById('stat-posts').textContent=getThreads().length;
+}
+
+/* ============================================================
+   CATEGORIES
+============================================================ */
+function renderCats(){
+  const c=document.getElementById('category-list');c.innerHTML='';
+  getCats().forEach(cat=>{
+    const gc=getGroupsByCat(cat.id).length;
+    const d=document.createElement('div');d.className='category-card';
+    d.innerHTML=`<div class="cat-icon">${cat.icon}</div><div class="cat-body"><div class="cat-name">${cat.name}</div><div class="cat-desc">${cat.description}</div><span class="cat-count">${gc} setup${gc!==1?'s':''}</span></div><span class="cat-arrow">›</span>`;
+    d.onclick=()=>navigate('groups',{cat});c.appendChild(d);
+  });
+}
+
+/* ============================================================
+   GROUPS
+============================================================ */
+function renderGroups(){
+  const cat=state.cat;if(!cat)return;
+  document.getElementById('group-page-title').textContent=cat.name+' Setups';
+  const c=document.getElementById('group-list');c.innerHTML='';
+  getGroupsByCat(cat.id).forEach(g=>{
+    const pc=getGroupProdCount(g.id),total=getGroupTotal(g.id);
+    const d=document.createElement('div');d.className='group-card';
+    const tagsHtml=(g.tags||[]).map(t=>`<span class="tag ${t.includes('Low')||t.includes('Budget')?'amber':t.includes('Emergency')||t.includes('Heavy')?'red':'green'}">${t}</span>`).join('');
+    d.innerHTML=`<div class="group-card-top"><div class="group-icon ${g.style||'default'}">${g.icon}</div><div class="group-body"><div class="group-name">${g.name}</div><div class="group-desc">${g.description}</div></div></div><div class="group-tags">${tagsHtml}</div><div class="group-meta"><div class="group-price-range">Est. Total: <strong>${formatP(total)}</strong></div><span class="group-product-count">${pc} products</span></div>`;
+    d.onclick=()=>navigate('products',{group:g});c.appendChild(d);
+  });
+}
+
+/* ============================================================
+   PRODUCTS
+============================================================ */
+function renderProducts(){
+  const g=state.group;if(!g)return;
+  document.getElementById('product-page-title').textContent=g.name;
+  document.getElementById('product-page-sub').textContent=g.description;
+  const prods=getProdsByGroup(g.id);const c=document.getElementById('product-list');c.innerHTML='';
+  const total=prods.reduce((s,p)=>s+p.price,0);
+  document.getElementById('total-amount-display').textContent=formatP(total);
+  document.getElementById('total-count-display').textContent=prods.length+' products';
+  document.getElementById('share-link-value').value=window.location.href.split('#')[0]+'#group='+g.id;
+  document.getElementById('share-modal-sub').textContent='"'+g.name+'" — '+formatP(total);
+  if(!prods.length){c.innerHTML=`<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No products yet</div><div class="empty-state-sub">Add products via Admin panel.</div></div>`;return}
+  prods.forEach(p=>{
+    const clicks=getClicks().filter(l=>l.pid==p.id).length;
+    const d=document.createElement('div');d.className='product-card';
+    d.innerHTML=`<div class="product-img-wrap">${p.image?`<img src="${p.image}" alt="${p.name}" loading="lazy">`:`<div class="product-img-placeholder"><div class="placeholder-icon">🔆</div><span>${p.name.split(' ').slice(0,2).join(' ')}</span></div>`}${p.badge?`<div class="product-badge">${p.badge}</div>`:''}</div><div class="product-body"><div class="product-name">${p.name}</div><div class="product-desc">${p.description}</div><div class="product-tags">${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="product-price">${formatP(p.price)}<span class="price-note"> estimated</span></div><div class="affiliate-toggle"><button class="affiliate-btn shopee-btn" onclick="handleAff(${p.id},'shopee','${p.shopee_url}')">🛒 Shopee</button><button class="affiliate-btn lazada-btn" onclick="handleAff(${p.id},'lazada','${p.lazada_url}')">🏪 Lazada</button></div><div class="product-footer"><span>👆 ${clicks} click${clicks!==1?'s':''}</span><span>Tap to buy →</span></div></div>`;
+    c.appendChild(d);
+  });
+}
+function handleAff(pid,platform,url){
+  logClick(pid,platform,state.group?.id);
+  showToast('Opening '+(platform==='shopee'?'🛒 Shopee':'🏪 Lazada')+'...');
+  setTimeout(()=>window.open(url,'_blank'),400);renderProducts();
+}
+
+/* ============================================================
+   SECURITY LAYER
+============================================================ */
+const SEC={
+  POST_COOLDOWN_MS:5*60*1000, REPLY_COOLDOWN_MS:90*1000,
+  MAX_POSTS_PER_HOUR:3, MAX_REPLIES_PER_HOUR:8,
+  MIN_TITLE_LEN:10, MAX_TITLE_LEN:150,
+  MIN_BODY_LEN:20, MAX_BODY_LEN:2000,
+  MIN_NAME_LEN:2, MAX_NAME_LEN:30,
+  MIN_REPLY_LEN:10, MAX_REPLY_LEN:1000,
+};
+const SPAM_PATTERNS=[/(.)\1{6,}/,/https?:\/\//gi,/\b(buy now|click here|earn money|free money|discount code|promo code|legit|mag-join|kumita|invest now|forex|crypto pump)\b/gi,/[A-Z\s]{30,}/,/(.)(\1){4,}/];
+const BLOCKED_WORDS=['<script','onerror=','onclick=','javascript:','onload=','eval(','document.cookie'];
+function isSpam(t){const l=t.toLowerCase();if(BLOCKED_WORDS.some(w=>l.includes(w)))return true;if(SPAM_PATTERNS.some(p=>p.test(t)))return true;const na=(t.match(/[^a-zA-Z0-9\s\u00C0-\u024F.,!?'"()\-:;₱]/g)||[]).length;return na/t.length>0.45}
+function sanitize(s){return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function validateName(el){el.value=el.value.replace(/[^a-zA-Z\s\u00C0-\u024F.\-]/g,'')}
+function updateCharCounter(inputId,cId,max){const el=document.getElementById(inputId),c=document.getElementById(cId);if(!el||!c)return;const len=el.value.length;c.textContent=len+' / '+max;c.className='char-counter'+(len>max*.85?' warn':'')+(len>=max?' over':'')}
+function getRateLogs(k){try{return JSON.parse(localStorage.getItem(k))||[]}catch(e){return[]}}
+function addRateLog(k){const l=getRateLogs(k);l.push(Date.now());localStorage.setItem(k,JSON.stringify(l.slice(-50)))}
+function getRecentCount(k,windowMs){const now=Date.now();return getRateLogs(k).filter(t=>now-t<windowMs).length}
+function msSinceLast(k){const l=getRateLogs(k);return l.length?Date.now()-l[l.length-1]:Infinity}
+let captchaA=0,captchaB=0,captchaAnswer=0;
+function generateCaptcha(qId,inId){captchaA=Math.floor(Math.random()*12)+1;captchaB=Math.floor(Math.random()*12)+1;captchaAnswer=captchaA+captchaB;const q=document.getElementById(qId);if(q)q.textContent=`${captchaA} + ${captchaB} = ?`;const a=document.getElementById(inId);if(a)a.value=''}
+let cooldownTimer=null;
+function showCooldownBanner(bannerId,timerId,msLeft){
+  const b=document.getElementById(bannerId),t=document.getElementById(timerId);if(!b||!t)return;
+  b.classList.add('show');if(cooldownTimer)clearInterval(cooldownTimer);
+  const start=Date.now();
+  function tick(){const left=msLeft-(Date.now()-start);if(left<=0){b.classList.remove('show');clearInterval(cooldownTimer);return}const m=Math.floor(left/60000),s=Math.floor((left%60000)/1000);t.textContent=m+':'+(s<10?'0':'')+s}
+  tick();cooldownTimer=setInterval(tick,1000);
+}
+
+/* ============================================================
+   COMMUNITY — FORUM
+============================================================ */
+let currentCommTab='forum';
+let selectedPostTag='question';
+let activeThreadFilter='all';
+
+function switchCommTab(tab){
+  currentCommTab=tab;
+  document.querySelectorAll('.comm-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.comm-tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('ctab-'+tab).classList.add('active');
+  document.getElementById('ctab-content-'+tab).classList.add('active');
+}
+function renderCommunity(){renderThreadList();renderBrandRatings()}
+function renderThreadList(){
+  const threads=getThreads().sort((a,b)=>b.ts-a.ts);
+  const filterEl=document.getElementById('thread-filters');
+  const filters=[{key:'all',label:'🌐 All'},{key:'question',label:'❓ Questions'},{key:'tip',label:'💡 Tips'},{key:'review',label:'⭐ Reviews'},{key:'build',label:'🔧 Builds'},{key:'warning',label:'⚠️ Warnings'}];
+  filterEl.innerHTML=filters.map(f=>`<div class="tf-chip${activeThreadFilter===f.key?' active':''}" onclick="setThreadFilter('${f.key}')">${f.label}</div>`).join('');
+  const filtered=activeThreadFilter==='all'?threads:threads.filter(t=>t.tag===activeThreadFilter);
+  const listEl=document.getElementById('thread-list');
+  if(!filtered.length){listEl.innerHTML=`<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No posts yet</div><div class="empty-state-sub">Be the first to post!</div></div>`;return}
+  listEl.innerHTML=filtered.map(t=>{
+    const replies=getReplies()[t.id]||[];
+    const flairLabel={question:'❓ Question',tip:'💡 Tip',review:'⭐ Review',build:'🔧 Build',warning:'⚠️ Warning'}[t.tag]||t.tag;
+    const voted=localStorage.getItem('tv_'+t.id)==='1';
+    return`<div class="thread-card" onclick="openThread(${t.id})">
+      <div class="thread-top">
+        <div class="thread-avatar" style="background:${t.color}">${sanitize(t.author).slice(0,2).toUpperCase()}</div>
+        <div class="thread-meta"><div class="thread-author">${sanitize(t.author)}<span class="thread-flair ${t.tag}">${flairLabel}</span></div><div class="thread-time">${timeAgo(t.ts)}</div></div>
+      </div>
+      <div class="thread-title">${sanitize(t.title)}</div>
+      <div class="thread-excerpt">${sanitize(t.body)}</div>
+      <div class="thread-footer">
+        <button class="thread-upvote-btn${voted?' voted':''}" onclick="voteThread(event,${t.id})">▲ ${t.votes}</button>
+        <span class="thread-stat">💬 ${replies.length} repl${replies.length===1?'y':'ies'}</span>
+        <span class="thread-stat">👁 View</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function setThreadFilter(f){activeThreadFilter=f;renderThreadList()}
+function showNewPostForm(){
+  if(msSinceLast('sp_post_ts')<SEC.POST_COOLDOWN_MS){showToast('⏳ Please wait before posting again');return}
+  document.getElementById('new-post-form-wrap').classList.add('show');
+  generateCaptcha('post-captcha-q','post-captcha-ans');
+}
+function hideNewPostForm(){document.getElementById('new-post-form-wrap').classList.remove('show');document.getElementById('spam-warn-post').classList.remove('show')}
+function selectPostTag(el){document.querySelectorAll('.nf-tag-chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedPostTag=el.dataset.tag}
+
+function submitPost(){
+  const rawName=(document.getElementById('nf-name')?.value||'').trim();
+  const rawTitle=(document.getElementById('nf-title')?.value||'').trim();
+  const rawBody=(document.getElementById('nf-body')?.value||'').trim();
+  const captchaInput=parseInt(document.getElementById('post-captcha-ans')?.value||'-99');
+  // captcha
+  if(captchaInput!==captchaAnswer){showToast('❌ Wrong answer — solve the math question');generateCaptcha('post-captcha-q','post-captcha-ans');return}
+  // cooldown
+  const msLeft=SEC.POST_COOLDOWN_MS-msSinceLast('sp_post_ts');
+  if(msLeft>0){showCooldownBanner('post-cooldown-banner','post-cooldown-timer',msLeft);showToast('⏳ Please wait before posting again');return}
+  // hourly limit
+  if(getRecentCount('sp_post_ts',3600000)>=SEC.MAX_POSTS_PER_HOUR){showToast('🚫 Max '+SEC.MAX_POSTS_PER_HOUR+' posts/hour. Try later.');return}
+  // name
+  const nameClean=rawName.replace(/[^a-zA-Z\s\u00C0-\u024F.\-]/g,'').trim();
+  if(nameClean.length<SEC.MIN_NAME_LEN){showToast('⚠️ Name must be at least '+SEC.MIN_NAME_LEN+' letters');return}
+  // title
+  if(rawTitle.length<SEC.MIN_TITLE_LEN){showToast('⚠️ Title must be at least '+SEC.MIN_TITLE_LEN+' characters');return}
+  if(rawTitle.length>SEC.MAX_TITLE_LEN){showToast('⚠️ Title too long');return}
+  // body
+  if(rawBody.length<SEC.MIN_BODY_LEN){showToast('⚠️ Details must be at least '+SEC.MIN_BODY_LEN+' characters');return}
+  if(rawBody.length>SEC.MAX_BODY_LEN){showToast('⚠️ Details too long');return}
+  // spam
+  if(isSpam(rawTitle+' '+rawBody)){document.getElementById('spam-warn-post').classList.add('show');showToast('🚫 Message flagged as spam');generateCaptcha('post-captcha-q','post-captcha-ans');return}
+  document.getElementById('spam-warn-post').classList.remove('show');
+  // duplicate title (last 10 min)
+  const threads=getThreads();
+  if(threads.find(t=>t.title.toLowerCase().trim()===rawTitle.toLowerCase().trim()&&Date.now()-t.ts<600000)){showToast('⚠️ This post already exists!');return}
+  const newId=Math.max(0,...threads.map(t=>t.id))+1;
+  const colors=['#2563EB','#059669','#7C3AED','#DC2626','#D97706','#0891B2','#BE185D'];
+  threads.unshift({id:newId,author:nameClean||'Anonymous',color:colors[newId%colors.length],tag:selectedPostTag,title:rawTitle,body:rawBody,votes:0,ts:Date.now()});
+  dbSet(DB.THREADS,threads);addRateLog('sp_post_ts');
+  ['nf-name','nf-title','nf-body'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  ['tc-title','tc-body'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='0 / '+(id==='tc-title'?150:2000)});
+  hideNewPostForm();renderThreadList();showToast('✅ Post submitted! ('+SEC.MAX_POSTS_PER_HOUR+' posts/hr limit)');
+}
+
+function voteThread(e,tid){
+  e.stopPropagation();
+  const key='tv_'+tid;if(localStorage.getItem(key)==='1'){showToast('Already voted!');return}
+  const threads=getThreads();const t=threads.find(x=>x.id==tid);if(!t)return;
+  t.votes++;dbSet(DB.THREADS,threads);localStorage.setItem(key,'1');renderThreadList();showToast('▲ Upvoted!');
+}
+
+function openThread(tid){
+  const threads=getThreads();const t=threads.find(x=>x.id==tid);if(!t)return;
+  const replies=getReplies()[tid]||[];
+  const voted=localStorage.getItem('tv_'+tid)==='1';
+  const flairLabel={question:'❓ Question',tip:'💡 Tip',review:'⭐ Review',build:'🔧 Build',warning:'⚠️ Warning'}[t.tag]||t.tag;
+  document.getElementById('community-list-view').classList.add('hide');
+  const detail=document.getElementById('thread-detail-view');
+  detail.classList.add('show');
+  const rCA=Math.floor(Math.random()*12)+1,rCB=Math.floor(Math.random()*12)+1,rAns=rCA+rCB;
+  detail.querySelector('#thread-detail-inner').innerHTML=`
+    <div class="thread-detail-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div class="thread-avatar" style="background:${t.color};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#fff;flex-shrink:0">${sanitize(t.author).slice(0,2).toUpperCase()}</div>
+        <div><div style="font-size:.82rem;font-weight:700">${sanitize(t.author)}<span class="thread-flair ${t.tag}" style="margin-left:6px">${flairLabel}</span></div><div style="font-size:.7rem;color:var(--gray-400)">${timeAgo(t.ts)}</div></div>
+      </div>
+      <div class="thread-detail-title">${sanitize(t.title)}</div>
+      <div class="thread-detail-body">${sanitize(t.body).replace(/\n/g,'<br>')}</div>
+      <div class="thread-detail-footer">
+        <button class="thread-upvote-btn${voted?' voted':''}" onclick="voteThread(event,${t.id})">▲ ${t.votes} upvotes</button>
+        <span style="font-size:.73rem;color:var(--gray-400)">💬 ${replies.length} repl${replies.length===1?'y':'ies'}</span>
+      </div>
+    </div>
+    <div class="replies-section-title">💬 Replies (${replies.length})</div>
+    <div id="reply-list">${replies.length?replies.map((r,i)=>{
+      const rv=localStorage.getItem('rv_'+tid+'_'+i)==='1';
+      return`<div class="reply-card"><div class="reply-top"><div class="reply-avatar" style="background:${r.color||'#6B7280'}">${sanitize(r.author||'?').slice(0,2).toUpperCase()}</div><span class="reply-author">${sanitize(r.author||'Anonymous')}</span><span class="reply-time">${timeAgo(r.ts)}</span></div><div class="reply-body">${sanitize(r.body).replace(/\n/g,'<br>')}</div><div class="reply-actions"><span class="reply-upvote${rv?' voted':''}" onclick="voteReply(${tid},${i},this)">▲ ${r.votes||0}</span></div></div>`;
+    }).join(''):'<div style="text-align:center;padding:20px;color:var(--gray-400);font-size:.8rem">No replies yet — be the first!</div>'}</div>
+    <div class="reply-input-area">
+      <div class="reply-input-title">💬 Write a reply</div>
+      <div id="reply-cd-${tid}" class="cooldown-banner" style="margin-bottom:8px">
+        <div class="cooldown-icon">⏳</div>
+        <div class="cooldown-text"><div class="cooldown-title">Too fast!</div><div class="cooldown-sub">Wait before replying:</div></div>
+        <div class="cooldown-timer" id="rcd-t-${tid}">1:30</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input type="text" class="reply-name-input" id="rname-${tid}" placeholder="Your name (letters only)" maxlength="30" oninput="validateName(this)" style="flex:1">
+      </div>
+      <textarea class="reply-textarea" id="rtext-${tid}" placeholder="Write a helpful reply… (min 10 chars)" maxlength="1000" oninput="updateCharCounter('rtext-${tid}','rcc-${tid}',1000)" style="width:100%"></textarea>
+      <div class="char-counter" id="rcc-${tid}">0 / 1000</div>
+      <div id="spam-warn-r-${tid}" class="spam-warning">⚠️ Reply looks like spam. Write a genuine message.</div>
+      <div class="captcha-box" style="margin-top:8px">
+        <div class="captcha-question">🔒 Anti-spam check: <span id="rcq-${tid}">${rCA} + ${rCB} = ?</span></div>
+        <div class="captcha-row"><input type="number" class="captcha-input" id="rca-${tid}" data-ans="${rAns}" placeholder="?"><span class="captcha-hint">Type the answer to post</span></div>
+      </div>
+      <button class="reply-submit-btn" style="margin-top:8px;width:100%" onclick="submitReply(${tid})">💬 Post Reply</button>
+    </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function closeThreadDetail(){document.getElementById('community-list-view').classList.remove('hide');document.getElementById('thread-detail-view').classList.remove('show')}
+
+function submitReply(tid){
+  const rawName=(document.getElementById('rname-'+tid)?.value||'').trim();
+  const rawBody=(document.getElementById('rtext-'+tid)?.value||'').trim();
+  const captchaEl=document.getElementById('rca-'+tid);
+  const captchaAns=parseInt(captchaEl?.dataset.ans||'0');
+  const captchaInput=parseInt(captchaEl?.value||'-99');
+  // captcha
+  if(captchaInput!==captchaAns){showToast('❌ Wrong captcha answer');if(captchaEl)captchaEl.value='';return}
+  // cooldown
+  const msLeft=SEC.REPLY_COOLDOWN_MS-msSinceLast('sp_reply_ts');
+  if(msLeft>0){showCooldownBanner('reply-cd-'+tid,'rcd-t-'+tid,msLeft);showToast('⏳ Wait before replying again');return}
+  // hourly limit
+  if(getRecentCount('sp_reply_ts',3600000)>=SEC.MAX_REPLIES_PER_HOUR){showToast('🚫 Max '+SEC.MAX_REPLIES_PER_HOUR+' replies/hour');return}
+  // body
+  if(rawBody.length<SEC.MIN_REPLY_LEN){showToast('⚠️ Reply needs at least '+SEC.MIN_REPLY_LEN+' characters');return}
+  if(rawBody.length>SEC.MAX_REPLY_LEN){showToast('⚠️ Reply too long');return}
+  // spam
+  if(isSpam(rawBody)){document.getElementById('spam-warn-r-'+tid).classList.add('show');showToast('🚫 Reply flagged as spam');if(captchaEl)captchaEl.value='';return}
+  document.getElementById('spam-warn-r-'+tid)?.classList.remove('show');
+  const nameClean=rawName.replace(/[^a-zA-Z\s\u00C0-\u024F.\-]/g,'').trim();
+  const author=nameClean.length>=SEC.MIN_NAME_LEN?nameClean:'Anonymous';
+  const allReplies=getReplies();if(!allReplies[tid])allReplies[tid]=[];
+  const colors=['#2563EB','#059669','#7C3AED','#DC2626','#D97706','#0891B2'];
+  allReplies[tid].push({author,body:rawBody,votes:0,color:colors[allReplies[tid].length%colors.length],ts:Date.now()});
+  dbSet(DB.REPLIES,allReplies);addRateLog('sp_reply_ts');
+  openThread(tid);showToast('✅ Reply posted!');
+}
+
+function voteReply(tid,idx,el){
+  const key='rv_'+tid+'_'+idx;if(localStorage.getItem(key)==='1'){showToast('Already voted!');return}
+  const allReplies=getReplies();allReplies[tid][idx].votes=(allReplies[tid][idx].votes||0)+1;
+  dbSet(DB.REPLIES,allReplies);localStorage.setItem(key,'1');
+  el.textContent='▲ '+allReplies[tid][idx].votes;el.classList.add('voted');showToast('▲ Upvoted!');
+}
+
+
+/* ============================================================
+   BRAND RATINGS
+============================================================ */
+function renderBrandRatings(){
+  const container=document.getElementById('brand-ratings-list');
+  const brands=getBrands();
+  const voted=getBrandVotes();
+  container.innerHTML=BRAND_CATS.map((cat,ci)=>{
+    const catBrands=(brands[cat.key]||cat.brands.map(n=>({name:n,votes:0}))).sort((a,b)=>b.votes-a.votes).slice(0,10);
+    const maxV=Math.max(1,...catBrands.map(b=>b.votes));
+    const myVote=voted[cat.key]||null;
+    const itemsHtml=catBrands.map((b,i)=>{
+      const isVoted=myVote===b.name;
+      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+      const rankCls=i===0?' top1':i===1?' top2':i===2?' top3':'';
+      const pct=Math.round((b.votes/maxV)*100);
+      return`<div class="brand-item">
+        <div class="brand-rank${rankCls}">${medal||('#'+(i+1))}</div>
+        <div class="brand-info">
+          <div class="brand-name">${b.name}</div>
+          <div class="brand-votes">${b.votes} vote${b.votes!==1?'s':''}</div>
+          <div class="brand-bar-wrap"><div class="brand-bar" style="width:${pct}%"></div></div>
+        </div>
+        <button class="brand-vote-btn ${isVoted?'voted':'unvoted'}" onclick="voteBrand('${cat.key}','${b.name.replace(/'/g,"\\'")}',${ci})">${isVoted?'✓ Voted':'▲ Vote'}</button>
+      </div>`;
+    }).join('');
+    // Add brand form
+    const addHtml=`<div class="brand-add-row" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-100)">
+      <input type="text" class="brand-add-input" id="brand-add-${cat.key}" placeholder="Suggest a brand...">
+      <button class="brand-add-btn" onclick="addBrand('${cat.key}')">+ Add</button>
+    </div>`;
+    return`<div class="brand-cat-card">
+      <div class="brand-cat-header" onclick="toggleBrandCat('${cat.key}')">
+        <div class="brand-cat-header-left">
+          <div class="brand-cat-icon ${cat.cls}">${cat.icon}</div>
+          <div><div class="brand-cat-title">${cat.label}</div><div class="brand-cat-sub">${catBrands[0]?.name||'—'} leads with ${catBrands[0]?.votes||0} votes</div></div>
+        </div>
+        <div class="brand-cat-toggle${ci<2?' open':''}" id="bct-${cat.key}">▼</div>
+      </div>
+      <div class="brand-cat-body${ci<2?' open':''}" id="bcb-${cat.key}">
+        <div class="brand-list">${itemsHtml}</div>
+        ${addHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleBrandCat(key){
+  const body=document.getElementById('bcb-'+key);
+  const tog=document.getElementById('bct-'+key);
+  const open=body.classList.contains('open');
+  body.classList.toggle('open',!open);tog.classList.toggle('open',!open);
+}
+function voteBrand(catKey,brandName,ci){
+  const voted=getBrandVotes();
+  if(voted[catKey]){showToast('Already voted in this category!');return}
+  const brands=getBrands();
+  const b=brands[catKey].find(x=>x.name===brandName);
+  if(!b){showToast('Brand not found');return}
+  b.votes++;voted[catKey]=brandName;
+  dbSet(DB.BRANDS,brands);dbSet(DB.BRAND_VOTES,voted);
+  renderBrandRatings();showToast('✅ Voted for '+brandName+'!');
+}
+function addBrand(catKey){
+  const input=document.getElementById('brand-add-'+catKey);
+  const name=input?.value.trim();
+  if(!name){showToast('⚠️ Enter a brand name');return}
+  const brands=getBrands();
+  if(brands[catKey].find(b=>b.name.toLowerCase()===name.toLowerCase())){showToast('Brand already in list!');return}
+  brands[catKey].push({name,votes:0});
+  dbSet(DB.BRANDS,brands);input.value='';
+  renderBrandRatings();showToast('✅ '+name+' added!');
+}
+
+/* ============================================================
+   ADMIN
+============================================================ */
+let adminAuth=false;
+let editingGroupId=null;
+function renderAdmin(){
+  const ls=document.getElementById('admin-login-section'),ps=document.getElementById('admin-panel-section');
+  if(!adminAuth){
+    ps.style.display='none';ls.style.display='block';
+    ls.innerHTML=`<div class="admin-login-wrap"><div class="admin-login-card"><div class="admin-login-icon">🔐</div><div class="admin-login-title">Admin Dashboard</div><div class="admin-login-sub">Manage products, groups, and analytics</div><div class="admin-input-group"><label>Password</label><input type="password" class="admin-input" id="admin-pw" placeholder="Password" onkeypress="if(event.key==='Enter')adminLogin()"></div><button class="btn-admin-login" onclick="adminLogin()">🔓 Login</button><div class="admin-hint">Hint: solar2024</div></div></div>`;
+  }else{ls.style.display='none';ps.style.display='block';renderAdminPanel()}
+}
+function adminLogin(){
+  if(document.getElementById('admin-pw')?.value===ADMIN_PASS){adminAuth=true;renderAdmin();showToast('✅ Access granted')}
+  else showToast('❌ Wrong password');
+}
+function renderAdminPanel(){
+  const panel=document.getElementById('admin-panel-section');
+  const cats=getCats(),groups=getGroups(),products=getProducts(),clicks=getClicks();
+  panel.innerHTML=`<div class="admin-panel">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-card-num">${products.length}</div><div class="stat-card-label">Products</div></div>
+      <div class="stat-card"><div class="stat-card-num">${groups.length}</div><div class="stat-card-label">Groups</div></div>
+      <div class="stat-card"><div class="stat-card-num">${clicks.length}</div><div class="stat-card-label">Clicks</div></div>
+      <div class="stat-card"><div class="stat-card-num">${getThreads().length}</div><div class="stat-card-label">Posts</div></div>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('products',this)">Products</button>
+      <button class="admin-tab" onclick="switchAdminTab('groups',this)">Groups</button>
+      <button class="admin-tab" onclick="switchAdminTab('analytics',this)">Analytics</button>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div id="admin-tab-products" class="admin-tab-content active">
+      <div class="admin-form-card">
+        <div class="admin-form-title">➕ Add New Product</div>
+        <div class="form-row">
+          <div class="form-group"><label>Name</label><input class="form-input" id="np-name" placeholder="200W Solar Panel"></div>
+          <div class="form-group"><label>Price (₱)</label><input type="number" class="form-input" id="np-price" placeholder="5000"></div>
+        </div>
+        <div class="form-group"><label>Description</label><input class="form-input" id="np-desc" placeholder="Short description"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Shopee URL</label><input class="form-input" id="np-shopee" placeholder="https://shopee.ph/..."></div>
+          <div class="form-group"><label>Lazada URL</label><input class="form-input" id="np-lazada" placeholder="https://lazada.com.ph/..."></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Tags (comma)</label><input class="form-input" id="np-tags" placeholder="#LowBudget"></div>
+          <div class="form-group"><label>Badge</label><input class="form-input" id="np-badge" placeholder="BESTSELLER"></div>
+        </div>
+        <button class="btn-save" onclick="adminSaveProd()">💾 Save Product</button>
+      </div>
+      <div class="admin-form-card">
+        <div class="admin-form-title">📦 All Products (${products.length})</div>
+        ${products.map(p=>`<div class="admin-list-item">
+          <div class="admin-list-info"><div class="admin-list-name">${p.name}</div><div class="admin-list-sub">${formatP(p.price)} · ${clicks.filter(l=>l.pid==p.id).length} clicks</div></div>
+          <div class="admin-list-actions">
+            <button class="btn-sm btn-sky" onclick="adminEditProd(${p.id})">✏️</button>
+            <button class="btn-sm btn-danger" onclick="adminDelProd(${p.id})">🗑️</button>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- GROUPS TAB -->
+    <div id="admin-tab-groups" class="admin-tab-content">
+      <div class="admin-form-card">
+        <div class="admin-form-title">➕ Add New Group</div>
+        <div class="form-row">
+          <div class="form-group"><label>Name</label><input class="form-input" id="ng-name" placeholder="Budget Friendly"></div>
+          <div class="form-group"><label>Icon (emoji)</label><input class="form-input" id="ng-icon" placeholder="💰"></div>
+        </div>
+        <div class="form-group"><label>Description</label><input class="form-input" id="ng-desc"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Category</label><select class="form-input" id="ng-cat">${cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
+          <div class="form-group"><label>Style</label><select class="form-input" id="ng-style"><option value="default">Default</option><option value="budget">Budget</option><option value="pro">Pro</option><option value="emergency">Emergency</option></select></div>
+        </div>
+        <div class="form-group"><label>Tags (comma)</label><input class="form-input" id="ng-tags" placeholder="#Budget, #Starter"></div>
+        <button class="btn-save" onclick="adminSaveGroup()">💾 Save Group</button>
+      </div>
+      <div class="admin-form-card">
+        <div class="admin-form-title">📂 All Groups (${groups.length})</div>
+        ${groups.map(g=>`
+        <div>
+          <div class="admin-list-item">
+            <div class="admin-list-info">
+              <div class="admin-list-name">${g.icon} ${g.name}</div>
+              <div class="admin-list-sub">${getGroupProdCount(g.id)} products · ${formatP(getGroupTotal(g.id))}</div>
+            </div>
+            <div class="admin-list-actions">
+              <button class="btn-sm btn-sky" onclick="toggleGroupEditPanel(${g.id})">✏️ Edit</button>
+              <button class="btn-sm btn-danger" onclick="adminDelGroup(${g.id})">🗑️</button>
+            </div>
+          </div>
+          <div id="gep-${g.id}" class="group-edit-panel">
+            <div class="group-edit-title">
+              Edit Group: ${g.name}
+              <span class="group-edit-close" onclick="toggleGroupEditPanel(${g.id})">✕</span>
+            </div>
+            <div class="form-row" style="margin-bottom:8px">
+              <div><label style="font-size:.7rem;color:var(--text-sub);display:block;margin-bottom:3px">Name</label><input class="form-input" id="gef-name-${g.id}" value="${g.name}"></div>
+              <div><label style="font-size:.7rem;color:var(--text-sub);display:block;margin-bottom:3px">Icon</label><input class="form-input" id="gef-icon-${g.id}" value="${g.icon}"></div>
+            </div>
+            <div style="margin-bottom:8px"><label style="font-size:.7rem;color:var(--text-sub);display:block;margin-bottom:3px">Description</label><input class="form-input" id="gef-desc-${g.id}" value="${g.description}"></div>
+            <div class="form-row" style="margin-bottom:8px">
+              <div><label style="font-size:.7rem;color:var(--text-sub);display:block;margin-bottom:3px">Style</label><select class="form-input" id="gef-style-${g.id}"><option value="default"${g.style==='default'?' selected':''}>Default</option><option value="budget"${g.style==='budget'?' selected':''}>Budget</option><option value="pro"${g.style==='pro'?' selected':''}>Pro</option><option value="emergency"${g.style==='emergency'?' selected':''}>Emergency</option></select></div>
+              <div><label style="font-size:.7rem;color:var(--text-sub);display:block;margin-bottom:3px">Tags</label><input class="form-input" id="gef-tags-${g.id}" value="${(g.tags||[]).join(', ')}"></div>
+            </div>
+            <div style="margin-bottom:10px">
+              <label style="font-size:.7rem;color:var(--text-sub);display:block;margin-bottom:5px">📦 Products in this group (check to include)</label>
+              <div class="product-picker" id="pp-${g.id}">
+                ${products.map(p=>{const inGroup=getPG().some(x=>x.gid==g.id&&x.pid==p.id);return`<div class="product-picker-item"><input type="checkbox" id="pp-cb-${g.id}-${p.id}" ${inGroup?'checked':''} onchange="toggleProductInGroup(${g.id},${p.id},this.checked)"><div class="product-picker-info"><div class="product-picker-name">${p.name}</div><div class="product-picker-price">${formatP(p.price)}</div></div></div>`}).join('')}
+              </div>
+            </div>
+            <button class="btn-save" onclick="saveGroupEdit(${g.id})">💾 Save Changes</button>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div id="admin-tab-analytics" class="admin-tab-content">
+      <div class="admin-form-card">
+        <div class="admin-form-title">📊 Top Clicked Products</div>
+        ${products.map(p=>({...p,cc:clicks.filter(l=>l.pid==p.id).length})).sort((a,b)=>b.cc-a.cc).slice(0,6).map(p=>`<div class="admin-list-item"><div class="admin-list-info"><div class="admin-list-name">${p.name}</div><div class="admin-list-sub">${p.cc} clicks</div></div><div style="font-family:'Syne',sans-serif;font-weight:800;color:var(--sun)">${p.cc}</div></div>`).join('')||'<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:.8rem">No clicks yet</div>'}
+      </div>
+      <div class="admin-form-card">
+        <div class="admin-form-title">📈 Platform Stats</div>
+        <div class="admin-list-item"><div class="admin-list-info"><div class="admin-list-name">🛒 Shopee</div></div><div style="font-family:'Syne',sans-serif;font-weight:800;color:#EE4D2D">${clicks.filter(l=>l.platform==='shopee').length}</div></div>
+        <div class="admin-list-item"><div class="admin-list-info"><div class="admin-list-name">🏪 Lazada</div></div><div style="font-family:'Syne',sans-serif;font-weight:800;color:#0F146B">${clicks.filter(l=>l.platform==='lazada').length}</div></div>
+      </div>
+      <button class="btn-sm btn-danger" style="margin-bottom:8px" onclick="if(confirm('Clear click logs?')){dbSet(DB.CLICK_LOGS,[]);renderAdminPanel();showToast('Cleared')}">🗑️ Reset Click Logs</button>
+    </div>
+    <div style="margin-top:16px"><button class="btn-sm btn-danger" onclick="adminLogout()">🔒 Logout</button></div>
+  </div>`;
+}
+function switchAdminTab(name,btn){
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('admin-tab-'+name).classList.add('active');
+}
+function toggleGroupEditPanel(gid){
+  const el=document.getElementById('gep-'+gid);
+  el.classList.toggle('show');
+}
+function toggleProductInGroup(gid,pid,checked){
+  const pg=getPG();
+  if(checked){if(!pg.some(x=>x.gid==gid&&x.pid==pid))pg.push({gid,pid})}
+  else{const idx=pg.findIndex(x=>x.gid==gid&&x.pid==pid);if(idx>-1)pg.splice(idx,1)}
+  dbSet(DB.PRODUCT_GROUPS,pg);
+  showToast(checked?'✅ Product added to group':'🗑️ Product removed from group');
+}
+function saveGroupEdit(gid){
+  const groups=getGroups();const g=groups.find(x=>x.id==gid);if(!g)return;
+  g.name=document.getElementById('gef-name-'+gid)?.value.trim()||g.name;
+  g.icon=document.getElementById('gef-icon-'+gid)?.value.trim()||g.icon;
+  g.description=document.getElementById('gef-desc-'+gid)?.value.trim()||g.description;
+  g.style=document.getElementById('gef-style-'+gid)?.value||g.style;
+  const tagsRaw=document.getElementById('gef-tags-'+gid)?.value.trim();
+  g.tags=tagsRaw?tagsRaw.split(',').map(t=>t.trim()).filter(Boolean):[];
+  dbSet(DB.GROUPS,groups);showToast('✅ Group saved!');renderAdminPanel();
+}
+function adminSaveProd(){
+  const name=document.getElementById('np-name')?.value.trim();
+  const price=parseFloat(document.getElementById('np-price')?.value);
+  if(!name||!price){showToast('⚠️ Name and price required');return}
+  const products=getProducts();const newId=Math.max(0,...products.map(p=>p.id))+1;
+  const tagsRaw=document.getElementById('np-tags')?.value.trim();
+  products.push({id:newId,name,price,description:document.getElementById('np-desc')?.value.trim()||'',tags:tagsRaw?tagsRaw.split(',').map(t=>t.trim()):[],shopee_url:document.getElementById('np-shopee')?.value.trim()||'https://shopee.ph',lazada_url:document.getElementById('np-lazada')?.value.trim()||'https://lazada.com.ph',image:null,badge:document.getElementById('np-badge')?.value.trim()||null});
+  dbSet(DB.PRODUCTS,products);showToast('✅ Product added!');renderAdminPanel();
+}
+function adminEditProd(id){
+  const p=getProducts().find(x=>x.id===id);if(!p)return;
+  const n=prompt('Product name:',p.name);if(n===null)return;
+  const pr=prompt('Price (₱):',p.price);if(pr===null)return;
+  const prods=getProducts();const idx=prods.findIndex(x=>x.id===id);
+  prods[idx].name=n.trim()||p.name;prods[idx].price=parseFloat(pr)||p.price;
+  dbSet(DB.PRODUCTS,prods);showToast('✅ Updated!');renderAdminPanel();
+}
+function adminDelProd(id){
+  if(!confirm('Delete product?'))return;
+  dbSet(DB.PRODUCTS,getProducts().filter(p=>p.id!==id));
+  dbSet(DB.PRODUCT_GROUPS,getPG().filter(pg=>pg.pid!==id));
+  showToast('🗑️ Deleted');renderAdminPanel();
+}
+function adminSaveGroup(){
+  const name=document.getElementById('ng-name')?.value.trim();if(!name){showToast('⚠️ Name required');return}
+  const groups=getGroups();const newId=Math.max(0,...groups.map(g=>g.id))+1;
+  const tagsRaw=document.getElementById('ng-tags')?.value.trim();
+  groups.push({id:newId,category_id:parseInt(document.getElementById('ng-cat')?.value),name,description:document.getElementById('ng-desc')?.value.trim()||'',icon:document.getElementById('ng-icon')?.value.trim()||'📦',style:document.getElementById('ng-style')?.value||'default',tags:tagsRaw?tagsRaw.split(',').map(t=>t.trim()):[]});
+  dbSet(DB.GROUPS,groups);showToast('✅ Group added!');renderAdminPanel();
+}
+function adminDelGroup(id){
+  if(!confirm('Delete group?'))return;
+  dbSet(DB.GROUPS,getGroups().filter(g=>g.id!==id));
+  dbSet(DB.PRODUCT_GROUPS,getPG().filter(pg=>pg.gid!==id));
+  showToast('🗑️ Deleted');renderAdminPanel();
+}
+function adminLogout(){adminAuth=false;renderAdmin();showToast('Logged out')}
+
+/* ============================================================
+   POWER CALCULATOR (full port from v2)
+============================================================ */
+const PRESETS=[
+  {name:'LED Bulb',icon:'💡',watts:10},{name:'Fluorescent 40W',icon:'💡',watts:40},{name:'Electric Fan',icon:'🌀',watts:60},{name:'Stand Fan',icon:'🌀',watts:80},
+  {name:'LED TV 32"',icon:'📺',watts:80},{name:'LED TV 55"',icon:'📺',watts:130},{name:'Phone Charger',icon:'📱',watts:15},{name:'Laptop',icon:'💻',watts:65},
+  {name:'Desktop PC',icon:'🖥️',watts:300},{name:'WiFi Router',icon:'📡',watts:12},{name:'CCTV 4ch',icon:'📷',watts:30},{name:'Refrigerator',icon:'🧊',watts:150},
+  {name:'Rice Cooker',icon:'🍚',watts:500},{name:'Washing Machine',icon:'🫧',watts:800},{name:'Water Pump 0.5HP',icon:'💧',watts:400},{name:'Water Pump 1HP',icon:'💧',watts:750},
+  {name:'Air Con 1HP',icon:'❄️',watts:900},{name:'Air Con 1.5HP',icon:'❄️',watts:1300},{name:'Microwave',icon:'📻',watts:1000},{name:'Electric Iron',icon:'👔',watts:1200},
+];
+const D_DAY_FROM='06:00',D_DAY_TO='18:00',D_NIGHT_FROM='18:00',D_NIGHT_TO='06:00';
+let dayList=[],nightList=[],nextId=1,currentPeriod='day';
+function genTimeOpts(){const o=[];for(let h=0;h<24;h++)for(let m=0;m<60;m+=30){const hh=String(h).padStart(2,'0'),mm=String(m).padStart(2,'0');o.push({val:`${hh}:${mm}`,label:fmt12(`${hh}:${mm}`)});}return o;}
+function fmt12(t){const[h,m]=t.split(':').map(Number);return`${h%12||12}:${String(m).padStart(2,'0')} ${h<12?'AM':'PM'}`}
+function hoursUse(from,to){let f=t2m(from),t=t2m(to);if(t<=f)t+=1440;return(t-f)/60}
+function t2m(t){const[h,m]=t.split(':').map(Number);return h*60+m}
+const TIME_OPTS=genTimeOpts();
+function timeSelHTML(id,sel){return`<select class="time-select" id="${id}" onchange="onTimeChange()">${TIME_OPTS.map(o=>`<option value="${o.val}"${o.val===sel?' selected':''}>${o.label}</option>`).join('')}</select>`}
+function onTimeChange(){updateAllWh();runCalculation()}
+function buildItemHTML(item,period){
+  const defFrom=period==='day'?D_DAY_FROM:D_NIGHT_FROM,defTo=period==='day'?D_DAY_TO:D_NIGHT_TO;
+  const hrs=hoursUse(item.from||defFrom,item.to||defTo);
+  const wh=Math.round(item.watts*(item.qty||1)*hrs);
+  return`<div class="calc-item" id="item-${item.id}"><div class="calc-item-top"><div class="calc-item-icon">${item.icon}</div><div class="calc-item-info"><div class="calc-item-name">${item.name}</div><div class="calc-item-watt-row"><span class="calc-item-watt-label">Watts:</span><input type="number" class="watt-edit" value="${item.watts}" min="1" id="watts-${item.id}" onchange="updateItemWatts(${item.id},'${period}',this.value)"><span class="watt-unit">W × ${item.qty||1} unit${(item.qty||1)>1?'s':''}</span></div></div><div class="calc-item-qty"><button class="qty-btn" onclick="updateItemQty(${item.id},'${period}',-1)">−</button><div class="qty-val" id="qty-${item.id}">${item.qty||1}</div><button class="qty-btn" onclick="updateItemQty(${item.id},'${period}',1)">+</button></div><button class="calc-item-del" onclick="removeItem(${item.id},'${period}')">✕</button></div><div class="calc-item-time"><span class="time-label">From</span><div class="time-range">${timeSelHTML('from-'+item.id,item.from||defFrom)}<span class="time-arrow">→</span>${timeSelHTML('to-'+item.id,item.to||defTo)}</div><span class="calc-item-wh" id="wh-${item.id}">${wh} Wh</span></div></div>`;
+}
+function renderAppliances(period){const list=period==='day'?dayList:nightList;const c=document.getElementById('list-'+period);if(!c)return;c.innerHTML=list.map(item=>buildItemHTML(item,period)).join('');updateAllWh()}
+function renderPresets(period){const c=document.getElementById('presets-'+period);if(!c)return;c.innerHTML=PRESETS.map(p=>`<div class="preset-chip" onclick="addPreset('${period}','${p.name}','${p.icon}',${p.watts})"><span class="chip-icon">${p.icon}</span>${p.name} <span style="color:var(--gray-400)">${p.watts}W</span></div>`).join('')}
+function addPreset(period,name,icon,watts){const list=period==='day'?dayList:nightList;const ex=list.find(x=>x.name===name);if(ex){ex.qty=(ex.qty||1)+1}else{const from=period==='day'?D_DAY_FROM:D_NIGHT_FROM,to=period==='day'?D_DAY_TO:D_NIGHT_TO;list.push({id:nextId++,name,icon,watts,qty:1,from,to})}renderAppliances(period);runCalculation();showToast('➕ '+name+' added')}
+function updateItemQty(id,period,delta){const list=period==='day'?dayList:nightList;const item=list.find(x=>x.id===id);if(!item)return;item.qty=Math.max(1,(item.qty||1)+delta);const el=document.getElementById('qty-'+id);if(el)el.textContent=item.qty;const we=document.getElementById('watts-'+id)?.parentElement?.querySelector('.watt-unit');if(we)we.textContent=`W × ${item.qty} unit${item.qty>1?'s':''}`;updateItemWh(id,period);runCalculation()}
+function updateItemWatts(id,period,val){const list=period==='day'?dayList:nightList;const item=list.find(x=>x.id===id);if(item){item.watts=parseFloat(val)||item.watts}updateItemWh(id,period);runCalculation()}
+function updateItemWh(id,period){const list=period==='day'?dayList:nightList;const item=list.find(x=>x.id===id);if(!item)return;const fe=document.getElementById('from-'+id),te=document.getElementById('to-'+id);if(fe)item.from=fe.value;if(te)item.to=te.value;const hrs=hoursUse(item.from,item.to);const wh=Math.round(item.watts*(item.qty||1)*hrs);const el=document.getElementById('wh-'+id);if(el)el.textContent=wh+' Wh'}
+function updateAllWh(){[...dayList,...nightList].forEach(item=>{const fe=document.getElementById('from-'+item.id),te=document.getElementById('to-'+item.id);if(fe)item.from=fe.value;if(te)item.to=te.value});dayList.forEach(item=>updateItemWh(item.id,'day'));nightList.forEach(item=>updateItemWh(item.id,'night'));updateSummaryBar()}
+function updateSummaryBar(){const dWh=calcPeriodWh(dayList),nWh=calcPeriodWh(nightList);document.getElementById('sum-day-wh').textContent=dWh.toFixed(0)+' Wh';document.getElementById('sum-night-wh').textContent=nWh.toFixed(0)+' Wh';document.getElementById('sum-total-wh').textContent=(dWh+nWh).toFixed(0)+' Wh'}
+function calcPeriodWh(list){return list.reduce((s,item)=>s+item.watts*(item.qty||1)*hoursUse(item.from,item.to),0)}
+function removeItem(id,period){if(period==='day')dayList=dayList.filter(x=>x.id!==id);else nightList=nightList.filter(x=>x.id!==id);renderAppliances(period);runCalculation()}
+function toggleCustomForm(period){document.getElementById('custom-form-'+period).classList.toggle('show')}
+function addCustomAppliance(period){const name=document.getElementById('custom-name-'+period)?.value.trim(),watts=parseFloat(document.getElementById('custom-watts-'+period)?.value);if(!name||!watts){showToast('⚠️ Enter name and watts');return};const from=period==='day'?D_DAY_FROM:D_NIGHT_FROM,to=period==='day'?D_DAY_TO:D_NIGHT_TO;(period==='day'?dayList:nightList).push({id:nextId++,name,icon:'⚡',watts,qty:1,from,to});document.getElementById('custom-name-'+period).value='';document.getElementById('custom-watts-'+period).value='';document.getElementById('custom-form-'+period).classList.remove('show');renderAppliances(period);runCalculation();showToast('➕ '+name+' added')}
+function switchPeriod(period){currentPeriod=period;document.getElementById('tab-day').classList.toggle('active',period==='day');document.getElementById('tab-night').classList.toggle('active',period==='night');document.getElementById('section-day').style.display=period==='day'?'block':'none';document.getElementById('section-night').style.display=period==='night'?'block':'none'}
+function nextStdMCB(a){return [6,10,16,20,25,32,40,50,63,80,100,125,160,200].find(s=>s>=a)||200}
+function nextStdFuse(a){return [5,10,15,20,25,30,40,50,60,80,100,125,150,200].find(s=>s>=a)||200}
+function wireGuide(a){if(a<=10)return{awg:'18 AWG',mm:'1mm²'};if(a<=15)return{awg:'14 AWG',mm:'2.5mm²'};if(a<=20)return{awg:'12 AWG',mm:'4mm²'};if(a<=30)return{awg:'10 AWG',mm:'6mm²'};if(a<=50)return{awg:'8 AWG',mm:'10mm²'};if(a<=65)return{awg:'6 AWG',mm:'16mm²'};if(a<=85)return{awg:'4 AWG',mm:'25mm²'};if(a<=115)return{awg:'2 AWG',mm:'35mm²'};if(a<=150)return{awg:'1/0 AWG',mm:'50mm²'};if(a<=175)return{awg:'2/0 AWG',mm:'70mm²'};return{awg:'4/0 AWG',mm:'95mm²'}}
+function detV(peakW){return peakW<=800?12:peakW<=3000?24:48}
+function nextInv(w){return [300,500,1000,1500,2000,3000,3500,5000,6000,8000,10000].find(s=>s>=w)||10000}
+function runCalculation(){
+  updateAllWh();
+  const all=[...dayList,...nightList];
+  if(!all.length){document.getElementById('calc-results').style.display='none';return}
+  const autonomy=parseInt(document.getElementById('cfg-autonomy')?.value)||2;
+  const panelW=parseInt(document.getElementById('cfg-panel-w')?.value)||400;
+  const sunHrs=parseFloat(document.getElementById('cfg-sun-hrs')?.value)||5;
+  const dayWh=calcPeriodWh(dayList),nightWh=calcPeriodWh(nightList),totalWh=dayWh+nightWh;
+  const peakW=all.reduce((s,item)=>s+item.watts*(item.qty||1),0);
+  const sysV=detV(peakW);
+  const batWh=nightWh*1.2*autonomy;
+  const batAh_la=Math.ceil(batWh/(sysV*0.5)),batAh_li=Math.ceil(batWh/(sysV*0.8));
+  const panelWneeded=Math.ceil((totalWh*1.25)/sunHrs);
+  const numPanels=Math.max(1,Math.ceil(panelWneeded/panelW));
+  const panelVoc=panelW<=100?21.6:panelW<=200?32:panelW<=400?49.5:62;
+  const panelVmp=panelW<=100?18:panelW<=200?27:panelW<=400?41:52;
+  let seriesG=1,parallelG=numPanels;
+  if(sysV===48){seriesG=2;parallelG=Math.max(1,Math.ceil(numPanels/2))}
+  const stringVoc=panelVoc*seriesG,stringVmp=panelVmp*seriesG;
+  const panelTotalW=numPanels*panelW;
+  const sccAmp=nextStdMCB(Math.ceil((panelTotalW/sysV)*1.25));
+  const sccMaxV=sysV<=12?50:sysV===24?100:150;
+  const invSize=nextInv(peakW*1.5);
+  const dcBatScc=nextStdMCB(Math.ceil(sccAmp*1.25));
+  const dcBatInv=nextStdMCB(Math.ceil((invSize/sysV)*1.25));
+  const panelFuse=nextStdFuse(Math.ceil((panelTotalW/parallelG/panelVoc)*1.25));
+  const acMainMCB=nextStdMCB(Math.ceil((peakW/220)*1.25));
+  const wgPSCC=wireGuide((panelTotalW/parallelG)/panelVmp);
+  const wgSCCB=wireGuide(sccAmp),wgBI=wireGuide(invSize/sysV),wgIA=wireGuide(peakW/220);
+  const fmt=w=>`${w.awg} / ${w.mm}`;
+  document.getElementById('calc-results').style.display='block';
+  document.getElementById('rh-battery').textContent=sysV+'V · '+batAh_li+'Ah LiFePO4';
+  document.getElementById('bat-voltage-badge').textContent=sysV+'V System';
+  document.getElementById('bat-voltage-reason').textContent=sysV===12?'Under 800W loads. Simple setup.'
+    :sysV===24?'800W–3kW loads. Best balance.'
+    :'Over 3kW. Most efficient, lower current.';
+  document.getElementById('bat-la-ah').textContent=batAh_la;
+  document.getElementById('bat-li-ah').textContent=batAh_li;
+  document.getElementById('bat-la-cost').textContent='Est. ₱'+(batAh_la*sysV/12*650).toLocaleString();
+  document.getElementById('bat-li-cost').textContent='Est. ₱'+(batAh_li*sysV/12*2200).toLocaleString();
+  document.getElementById('bat-night-wh').textContent=nightWh.toFixed(0)+' Wh';
+  document.getElementById('bat-days').textContent=autonomy+' day'+(autonomy>1?'s':'');
+  document.getElementById('bat-info-box').innerHTML='💡 Need <strong>'+batAh_li+'Ah @ '+sysV+'V</strong> LiFePO4 for '+autonomy+' day'+(autonomy>1?'s':'')+' covering '+nightWh.toFixed(0)+'Wh night load.';
+  document.getElementById('rh-panel').textContent=numPanels+'×'+panelW+'W = '+panelTotalW+'W';
+  document.getElementById('pan-count').textContent=numPanels+' panels';
+  document.getElementById('pan-each-w').textContent=panelW+'W';
+  document.getElementById('pan-total-w').textContent=panelTotalW+'W';
+  document.getElementById('pan-wiring').textContent=seriesG+'S × '+parallelG+'P';
+  document.getElementById('pan-voc').textContent=stringVoc.toFixed(1)+'V open circuit';
+  document.getElementById('pan-info-box').innerHTML=parallelG>1?'⚠️ '+parallelG+' parallel strings — install string fuses ('+panelFuse+'A each).':'✅ Single string — no parallel fuses needed.';
+  document.getElementById('rh-scc').textContent=sccAmp+'A MPPT @ '+sysV+'V';
+  document.getElementById('scc-amp').textContent=sccAmp+'A';
+  document.getElementById('scc-voltage').textContent=sysV+'V';
+  document.getElementById('scc-maxv').textContent=sccMaxV+'V (select ≥'+Math.ceil(stringVoc*1.2)+'V)';
+  document.getElementById('scc-model').textContent='Epever '+sccAmp+'AN or Renogy '+sccAmp+'A MPPT';
+  document.getElementById('rh-inverter').textContent=invSize+'W Pure Sine';
+  document.getElementById('inv-size').textContent=invSize+'W continuous';
+  document.getElementById('inv-dcv').textContent=sysV+'V DC';
+  document.getElementById('inv-surge').textContent=(invSize*2.5)+'W surge';
+  document.getElementById('dc-bat-scc').textContent=dcBatScc+'A DC MCB';
+  document.getElementById('dc-bat-inv').textContent=dcBatInv+'A DC MCB / ANL Fuse';
+  document.getElementById('dc-panel-fuse').textContent=parallelG>1?panelFuse+'A per string':'Not required';
+  document.getElementById('dc-main-disc').textContent=Math.max(dcBatScc,dcBatInv)+'A DC disconnect';
+  document.getElementById('ac-main-mcb').textContent=acMainMCB+'A AC MCB (2-pole)';
+  document.getElementById('wg-panel-scc').textContent=fmt(wgPSCC);
+  document.getElementById('wg-scc-bat').textContent=fmt(wgSCCB);
+  document.getElementById('wg-bat-inv').textContent=fmt(wgBI)+' ⚠️ keep short!';
+  document.getElementById('wg-inv-ac').textContent=fmt(wgIA);
+  const wireData=[{l:'18 AWG/1mm²',c:'10A',u:'LED lights'},{l:'14 AWG/2.5mm²',c:'15A',u:'Small loads'},{l:'12 AWG/4mm²',c:'20A',u:'Fans, TV'},{l:'10 AWG/6mm²',c:'30A',u:'Panel to SCC'},{l:'8 AWG/10mm²',c:'50A',u:'SCC to Battery'},{l:'6 AWG/16mm²',c:'65A',u:'SCC 50–65A'},{l:'4 AWG/25mm²',c:'85A',u:'Bat→Inv (1–2kW)'},{l:'2 AWG/35mm²',c:'115A',u:'Bat→Inv (2–3kW)'},{l:'1/0 AWG/50mm²',c:'150A',u:'Bat→Inv (3–5kW)'},{l:'2/0 AWG/70mm²',c:'175A',u:'Large inverters'}];
+  const activeL=fmt(wgBI).split(' ⚠️')[0];
+  document.getElementById('wire-ref-table').innerHTML=`<thead><tr><th>Wire</th><th>Max A</th><th>Use</th></tr></thead><tbody>${wireData.map(r=>`<tr class="${r.l===activeL?'active-row':''}"><td>${r.l===activeL?`<span class="wire-badge">→</span> `:' '}${r.l}</td><td>${r.c}</td><td>${r.u}</td></tr>`).join('')}</tbody>`;
+  renderCalcShopLinks(sysV,invSize,sccAmp,panelW,numPanels);
+  showToast('✅ Calculation complete!');
+}
+function toggleResult(key){const body=document.getElementById('rb-'+key),tog=document.getElementById('tog-'+key);const open=body.classList.contains('open');body.classList.toggle('open',!open);if(tog)tog.classList.toggle('open',!open)}
+function renderCalcPage(){renderPresets('day');renderPresets('night');renderAppliances('day');renderAppliances('night');switchPeriod('day');updateSummaryBar()}
+
+/* ── CALC SHOP LINKS — groups relevant to each component ── */
+const COMPONENT_GROUPS={
+  battery:    {icon:'🔋',bg:'linear-gradient(135deg,#D1FAE5,#6EE7B7)',keywords:['battery','lifepo4','agm','gel'],label:'Batteries'},
+  panel:      {icon:'☀️',bg:'linear-gradient(135deg,#FEF3C7,#FDE68A)',keywords:['panel','solar panel'],label:'Solar Panels'},
+  scc:        {icon:'🔆',bg:'linear-gradient(135deg,#E0F2FE,#BAE6FD)',keywords:['mppt','scc','charge controller','pwm'],label:'Charge Controllers'},
+  inverter:   {icon:'🔌',bg:'linear-gradient(135deg,#EDE9FE,#DDD6FE)',keywords:['inverter','hybrid','charger'],label:'Inverters'},
+  breaker:    {icon:'⚡',bg:'linear-gradient(135deg,#FEE2E2,#FCA5A5)',keywords:['breaker','mcb','fuse','ats','mts'],label:'Breakers & Protection'},
+  bms:        {icon:'📊',bg:'linear-gradient(135deg,#FFEDD5,#FED7AA)',keywords:['bms','balancer','monitor'],label:'BMS & Monitors'},
+};
+
+function findGroupsForKeywords(keywords){
+  const groups=getGroups();
+  const products=getProducts();
+  const pg=getPG();
+  const matched=[];
+  groups.forEach(g=>{
+    const prods=pg.filter(x=>x.gid===g.id).map(x=>products.find(p=>p.id===x.pid)).filter(Boolean);
+    const allText=(g.name+' '+g.description+' '+(g.tags||[]).join(' ')+' '+prods.map(p=>p.name+' '+p.description).join(' ')).toLowerCase();
+    if(keywords.some(kw=>allText.includes(kw.toLowerCase()))){
+      matched.push({group:g,prods});
+    }
+  });
+  return matched.slice(0,3);
+}
+
+function renderCalcShopLinks(sysV,invSize,sccAmp,panelW,numPanels){
+  const container=document.getElementById('calc-shop-links');
+  if(!container)return;
+  const components=[
+    {key:'scc',   label:'SCC/MPPT',     icon:'🔆', bg:'linear-gradient(135deg,#E0F2FE,#BAE6FD)', note:sccAmp+'A @ '+sysV+'V',  kw:['mppt','scc','charge controller','controller']},
+    {key:'inverter',label:'Inverter',   icon:'🔌', bg:'linear-gradient(135deg,#EDE9FE,#DDD6FE)', note:invSize+'W Pure Sine',  kw:['inverter','hybrid']},
+    {key:'battery',label:'Battery',     icon:'🔋', bg:'linear-gradient(135deg,#D1FAE5,#6EE7B7)', note:sysV+'V LiFePO4/AGM',  kw:['battery','lifepo4','agm']},
+    {key:'panel',  label:'Solar Panel', icon:'☀️', bg:'linear-gradient(135deg,#FEF3C7,#FDE68A)', note:numPanels+'× '+panelW+'W',kw:['panel','solar panel']},
+    {key:'breaker',label:'Breakers',    icon:'⚡', bg:'linear-gradient(135deg,#FEE2E2,#FCA5A5)', note:'MCB & Fuses',           kw:['breaker','mcb','fuse']},
+    {key:'bms',    label:'BMS/Monitor', icon:'📊', bg:'linear-gradient(135deg,#FFEDD5,#FED7AA)', note:'For '+sysV+'V system',  kw:['bms','balancer','monitor']},
+  ];
+
+  const cards=components.map(comp=>{
+    const matched=findGroupsForKeywords(comp.kw);
+    const items=matched.map(({group:g,prods})=>{
+      const total=prods.reduce((s,p)=>s+p.price,0);
+      return`<div class="calc-shop-item" onclick="state.cat=getCats().find(c=>c.id==${g.category_id});navigate('products',{group:getGroups().find(x=>x.id==${g.id})})">
+        <div class="csi-icon" style="background:${comp.bg}">${comp.icon}</div>
+        <div class="csi-body">
+          <div class="csi-label">${g.icon} ${comp.label} Group</div>
+          <div class="csi-name">${g.name}</div>
+          <div class="csi-meta">${prods.length} product${prods.length!==1?'s':''}</div>
+        </div>
+        ${total>0?`<div class="csi-price">${formatP(total)}</div>`:''}
+        <div class="csi-arrow">›</div>
+      </div>`;
+    }).join('');
+    if(!items)return'';
+    return`<div class="calc-shop-card">
+      <div class="calc-shop-head">
+        <div class="calc-shop-head-icon">${comp.icon}</div>
+        <div style="flex:1"><div class="calc-shop-head-text">${comp.label} — ${comp.note}</div><div class="calc-shop-head-sub">Tap to browse on Shopee / Lazada</div></div>
+      </div>
+      ${items}
+    </div>`;
+  }).filter(Boolean).join('');
+
+  container.innerHTML=cards||`<div class="info-box" style="margin-bottom:12px">💡 Add products to groups in Admin panel to see shopping links here.</div>`;
+}
+
+/* ============================================================
+   SHARE / UTILITIES
+============================================================ */
+function openShareModal(){document.getElementById('share-modal').classList.add('open')}
+function closeShareModal(){document.getElementById('share-modal').classList.remove('open')}
+function copyShareLink(){const i=document.getElementById('share-link-value');navigator.clipboard.writeText(i.value).then(()=>{showToast('✅ Copied!');closeShareModal()}).catch(()=>{i.select();document.execCommand('copy');showToast('✅ Copied!');closeShareModal()})}
+function shareViaPlatform(p){const l=document.getElementById('share-link-value').value;if(p==='native'&&navigator.share)navigator.share({title:'SolarPinas',url:l});else if(p==='messenger')window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(l),'_blank');else if(p==='viber')window.open('viber://forward?text='+encodeURIComponent('Check this solar setup! '+l),'_blank');else copyShareLink()}
+function formatP(a){if(!a)return'₱0';return'₱'+Number(a).toLocaleString('en-PH')}
+function timeAgo(ts){const d=Date.now()-ts;if(d<60000)return'just now';if(d<3600000)return Math.floor(d/60000)+'m ago';if(d<86400000)return Math.floor(d/3600000)+'h ago';if(d<604800000)return Math.floor(d/86400000)+'d ago';return new Date(ts).toLocaleDateString('en-PH',{month:'short',day:'numeric'})}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+function checkHashRoute(){const h=window.location.hash.substring(1);const p={};h.split('&').forEach(part=>{const[k,v]=part.split('=');if(k&&v)p[k]=v});if(p.group){const g=getGroups().find(x=>x.id==p.group);if(g){const cat=getCats().find(c=>c.id==g.category_id);state.cat=cat;navigate('products',{group:g})}}}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  initDB();renderHome();checkHashRoute();
+});
+</script>
+</body>
+</html>
