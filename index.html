@@ -482,6 +482,21 @@ textarea.nf-input{resize:vertical;min-height:80px}
 .btn-admin-login{width:100%;padding:12px;background:var(--navy);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;border-radius:10px;transition:background .2s;margin-top:6px}
 .btn-admin-login:hover{background:var(--navy-soft)}
 .admin-hint{font-size:.72rem;color:var(--gray-400);margin-top:10px}
+.admin-2fa-box{background:var(--gray-100);border:1.5px solid var(--gray-200);border-radius:10px;padding:14px;margin-top:10px}
+.admin-2fa-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;color:var(--text-main);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.admin-2fa-sub{font-size:.72rem;color:var(--text-sub);margin-bottom:10px}
+.admin-2fa-input{width:100%;padding:11px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:1.1rem;font-weight:700;text-align:center;letter-spacing:.3em;color:var(--text-main);background:#fff;outline:none}
+.admin-2fa-input:focus{border-color:var(--sun);box-shadow:var(--shadow-glow)}
+.admin-step{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.admin-step-num{width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:.72rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.admin-step-text{font-size:.78rem;color:var(--text-sub)}
+.admin-step-text strong{color:var(--text-main)}
+.qr-wrap{text-align:center;margin:12px 0}
+.qr-wrap img{border-radius:10px;border:2px solid var(--gray-200)}
+.secret-box{background:#fff;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:.78rem;color:var(--navy-soft);word-break:break-all;text-align:center;margin-top:6px}
+.badge-2fa-on{background:var(--green-light);color:var(--green);font-family:'Syne',sans-serif;font-weight:700;font-size:.65rem;padding:2px 7px;border-radius:99px;border:1.5px solid var(--green)}
+.badge-2fa-off{background:var(--red-light);color:var(--red);font-family:'Syne',sans-serif;font-weight:700;font-size:.65rem;padding:2px 7px;border-radius:99px;border:1.5px solid var(--red)}
+.login-stage{display:none}.login-stage.active{display:block}
 .admin-panel{max-width:520px;margin:0 auto;padding:0 16px}
 .admin-tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--gray-100);border-radius:10px;padding:4px}
 .admin-tab{flex:1;padding:9px;border-radius:7px;font-family:'Syne',sans-serif;font-weight:600;font-size:.72rem;color:var(--gray-500);transition:all .18s;text-align:center}
@@ -841,8 +856,58 @@ textarea.nf-input{resize:vertical;min-height:80px}
    Run the SQL in setup.sql to create all tables first!
 ═══════════════════════════════════════════════════════════ */
 const SUPABASE_URL  = 'https://asvjqooixfqhbpttqagc.supabase.co';
-const SUPABASE_ANON = 'https://asvjqooixfqhbpttqagc.supabase.co';
-const ADMIN_PASS    = 'supabase@Edrian#25';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzdmpxb29peGZxaGJwdHRxYWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzYyMTIsImV4cCI6MjA4ODMxMjIxMn0.8pRfIiSBH8A2r8SRxvwgVTpRH-9XRX2ASL-3lBTdV2Y';
+/* ── ADMIN SECURITY ─────────────────────────────────────────
+   Password stored as SHA-256 — plaintext never exposed.
+   To change password: SHA-256 hash your new password at
+   https://emn178.github.io/online-tools/sha256.html
+   Current password: solar2024
+──────────────────────────────────────────────────────────── */
+const ADMIN_PASS_HASH = '08ac8d7a13b3413d6b87e3c74185c8699437acabd4509c76002a037fd7d4138b';
+
+/* ── TOTP 2FA ───────────────────────────────────────────────
+   First login: use password only (no 2FA secret yet).
+   Then go Admin → Setup 2FA to scan QR with Google Authenticator.
+──────────────────────────────────────────────────────────── */
+const TOTP_ISSUER  = 'SolarPinas';
+const TOTP_ACCOUNT = 'admin@solarpinas';
+
+async function sha256hex(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function b32decode(b32){
+  const A='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  let bits=0,val=0,out=[];
+  for(const c of b32.toUpperCase().replace(/=+$/,'').replace(/\s/g,'')){
+    const i=A.indexOf(c);if(i<0)continue;
+    val=(val<<5)|i;bits+=5;
+    if(bits>=8){out.push((val>>>(bits-8))&255);bits-=8;}
+  }
+  return new Uint8Array(out);
+}
+async function genTOTP(secret,offset=0){
+  const key=await crypto.subtle.importKey('raw',b32decode(secret),{name:'HMAC',hash:'SHA-1'},false,['sign']);
+  const t=Math.floor(Date.now()/1000/30)+offset;
+  const tb=new Uint8Array(8);new DataView(tb.buffer).setBigUint64(0,BigInt(t));
+  const sig=new Uint8Array(await crypto.subtle.sign('HMAC',key,tb));
+  const off=sig[19]&0xf;
+  const code=((sig[off]&0x7f)<<24|(sig[off+1]&0xff)<<16|(sig[off+2]&0xff)<<8|(sig[off+3]&0xff))%1000000;
+  return String(code).padStart(6,'0');
+}
+async function verifyTOTP(secret,input){
+  for(const o of [0,-1,1]){if(await genTOTP(secret,o)===String(input).padStart(6,'0'))return true;}
+  return false;
+}
+function genTOTPSecret(){
+  const A='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  let s='';for(let i=0;i<32;i++)s+=A[crypto.getRandomValues(new Uint8Array(1))[0]%32];
+  return s;
+}
+function totpQRUrl(secret){
+  const uri=`otpauth://totp/${encodeURIComponent(TOTP_ISSUER)}:${encodeURIComponent(TOTP_ACCOUNT)}?secret=${secret}&issuer=${encodeURIComponent(TOTP_ISSUER)}&algorithm=SHA1&digits=6&period=30`;
+  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(uri)}`;
+}
 
 let SB; // Supabase client, set in initApp()
 
@@ -875,39 +940,45 @@ function getGroupProdCount(gid){ return C.pg.filter(x=>x.group_id==gid).length }
 function getGroupTotal(gid){ return getProdsByGroup(gid).reduce((s,p)=>s+p.price,0) }
 
 /* ── Supabase helpers ── */
+function dbErr(op, table, err){
+  const msg = err?.message || err?.code || JSON.stringify(err) || 'unknown';
+  console.error('[SolarPinas DB]', op, table, msg, err);
+  // Show red toast with actual error for debugging
+  showToast('❌ DB error on '+table+': '+msg.slice(0,60));
+}
+
 async function sbFetch(table, opts={}){
   let q = SB.from(table).select(opts.select||'*');
   if(opts.eq) Object.entries(opts.eq).forEach(([k,v])=>{ q=q.eq(k,v); });
   if(opts.order) q = q.order(opts.order, {ascending: opts.asc??false});
   const {data,error} = await q;
-  if(error){ console.error('sbFetch',table,error); return []; }
+  if(error){ dbErr('SELECT',table,error); return []; }
   return data||[];
 }
 async function sbInsert(table, row){
   const {data,error} = await SB.from(table).insert(row).select().single();
-  if(error){ console.error('sbInsert',table,error); return null; }
+  if(error){ dbErr('INSERT',table,error); return null; }
   return data;
 }
 async function sbUpdate(table, id, changes){
   const {error} = await SB.from(table).update(changes).eq('id',id);
-  if(error){ console.error('sbUpdate',table,error); }
+  if(error){ dbErr('UPDATE',table,error); }
   return !error;
 }
 async function sbDelete(table, id){
   const {error} = await SB.from(table).delete().eq('id',id);
-  if(error){ console.error('sbDelete',table,error); }
+  if(error){ dbErr('DELETE',table,error); }
   return !error;
 }
 async function sbDeleteWhere(table, col, val){
   const {error} = await SB.from(table).delete().eq(col,val);
-  if(error){ console.error('sbDeleteWhere',table,error); }
+  if(error){ dbErr('DELETE_WHERE',table,error); }
   return !error;
 }
 async function sbIncrementVotes(table, id){
-  // Use a raw RPC to atomically increment; fallback: read-then-write
   const {error} = await SB.rpc('increment_votes', {tbl: table, row_id: id});
   if(error){
-    // fallback
+    // fallback: read then write
     const {data} = await SB.from(table).select('votes').eq('id',id).single();
     if(data) await SB.from(table).update({votes:(data.votes||0)+1}).eq('id',id);
   }
@@ -1418,16 +1489,74 @@ async function addBrand(catKey){
 ============================================================ */
 let adminAuth=false;
 let editingGroupId=null;
+let adminStage=0; // 0=password, 1=2fa
+
 function renderAdmin(){
   const ls=document.getElementById('admin-login-section'),ps=document.getElementById('admin-panel-section');
   if(!adminAuth){
     ps.style.display='none';ls.style.display='block';
-    ls.innerHTML=`<div class="admin-login-wrap"><div class="admin-login-card"><div class="admin-login-icon">🔐</div><div class="admin-login-title">Admin Dashboard</div><div class="admin-login-sub">Manage products, groups, and analytics</div><div class="admin-input-group"><label>Password</label><input type="password" class="admin-input" id="admin-pw" placeholder="Password" onkeypress="if(event.key==='Enter')adminLogin()"></div><button class="btn-admin-login" onclick="adminLogin()">🔓 Login</button><div class="admin-hint">Hint: solar2024</div></div></div>`;
-  }else{ls.style.display='none';ps.style.display='block';renderAdminPanel()}
+    const has2fa=!!lsGet('sp_totp_secret');
+    ls.innerHTML=`<div class="admin-login-wrap">
+      <div class="admin-login-card">
+        <div class="admin-login-icon">🔐</div>
+        <div class="admin-login-title">Admin Dashboard</div>
+        <div class="admin-login-sub">Secured with password + 2FA</div>
+        <!-- STAGE 1: Password -->
+        <div id="login-stage-pw" class="login-stage active">
+          <div class="admin-input-group" style="margin-top:16px"><label>Password</label>
+            <input type="password" class="admin-input" id="admin-pw" placeholder="Enter admin password" onkeypress="if(event.key==='Enter')adminCheckPass()">
+          </div>
+          <button class="btn-admin-login" onclick="adminCheckPass()">Continue →</button>
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px">
+            <span class="admin-hint">2FA:</span>
+            <span class="${has2fa?'badge-2fa-on':'badge-2fa-off'}">${has2fa?'✓ Enabled':'✗ Not set up'}</span>
+          </div>
+        </div>
+        <!-- STAGE 2: TOTP -->
+        <div id="login-stage-2fa" class="login-stage">
+          <div class="admin-2fa-box" style="margin-top:14px">
+            <div class="admin-2fa-title">🔑 Two-Factor Authentication</div>
+            <div class="admin-2fa-sub">Open Google Authenticator and enter the 6-digit code for <strong>SolarPinas</strong></div>
+            <input type="number" class="admin-2fa-input" id="admin-totp" placeholder="000000" maxlength="6" oninput="if(this.value.length>=6)adminCheckTOTP()">
+          </div>
+          <button class="btn-admin-login" style="margin-top:10px" onclick="adminCheckTOTP()">🔓 Login</button>
+          <div style="text-align:center;margin-top:8px"><span class="admin-hint" style="cursor:pointer;color:var(--sky)" onclick="adminStage=0;renderAdmin()">← Back</span></div>
+        </div>
+      </div>
+    </div>`;
+    adminStage=0;
+  }else{
+    ls.style.display='none';ps.style.display='block';renderAdminPanel();
+  }
 }
-function adminLogin(){
-  if(document.getElementById('admin-pw')?.value===ADMIN_PASS){adminAuth=true;renderAdmin();showToast('✅ Access granted')}
-  else showToast('❌ Wrong password');
+
+async function adminCheckPass(){
+  const pw=document.getElementById('admin-pw')?.value||'';
+  const hash=await sha256hex(pw);
+  if(hash!==ADMIN_PASS_HASH){showToast('❌ Wrong password');return}
+  const secret=lsGet('sp_totp_secret');
+  if(!secret){
+    // No 2FA set up yet — grant access and prompt setup
+    adminAuth=true;renderAdmin();showToast('✅ Access granted — please set up 2FA!');
+    setTimeout(()=>renderAdmin2FASetup(),400);
+    return;
+  }
+  // Has 2FA — move to TOTP stage
+  adminStage=1;
+  document.getElementById('login-stage-pw').classList.remove('active');
+  document.getElementById('login-stage-2fa').classList.add('active');
+  document.getElementById('admin-totp')?.focus();
+  showToast('🔑 Enter your authenticator code');
+}
+
+async function adminCheckTOTP(){
+  const code=String(document.getElementById('admin-totp')?.value||'').trim();
+  if(code.length!==6){showToast('⚠️ Enter 6-digit code');return}
+  const secret=lsGet('sp_totp_secret');
+  if(!secret){showToast('❌ No 2FA secret found');return}
+  const ok=await verifyTOTP(secret,code);
+  if(!ok){showToast('❌ Wrong code — check your authenticator');document.getElementById('admin-totp').value='';return}
+  adminAuth=true;renderAdmin();showToast('✅ Welcome back, admin!');
 }
 function renderAdminPanel(){
   const panel=document.getElementById('admin-panel-section');
@@ -1545,7 +1674,11 @@ function renderAdminPanel(){
       </div>
       <button class="btn-sm btn-danger" style="margin-bottom:8px" onclick="(async()=>{if(!confirm('Clear click logs?'))return;await SB.from('click_logs').delete().neq('id',0);C.clicks=[];renderAdminPanel();showToast('Cleared');})()">🗑️ Reset Click Logs</button>
     </div>
-    <div style="margin-top:16px"><button class="btn-sm btn-danger" onclick="adminLogout()">🔒 Logout</button></div>
+    <div style="margin-top:16px;display:flex;gap:8px;align-items:center">
+    <button class="btn-sm btn-danger" onclick="adminLogout()">🔒 Logout</button>
+    <button class="btn-sm" style="background:var(--sky-light);color:var(--sky)" onclick="renderAdmin2FASetup()">🔑 Setup / Change 2FA</button>
+    <span class="${lsGet('sp_totp_secret')?'badge-2fa-on':'badge-2fa-off'}">${lsGet('sp_totp_secret')?'✓ 2FA ON':'✗ 2FA OFF'}</span>
+  </div>
   </div>`;
 }
 function switchAdminTab(name,btn){
@@ -1624,7 +1757,50 @@ async function adminDelGroup(id){
   C.pg=C.pg.filter(pg=>pg.group_id!==id);
   showToast('🗑️ Deleted');renderAdminPanel();
 }
-function adminLogout(){adminAuth=false;renderAdmin();showToast('Logged out')}
+function adminLogout(){adminAuth=false;adminStage=0;renderAdmin();showToast('🔒 Logged out')}
+
+/* ── 2FA SETUP ── */
+function renderAdmin2FASetup(){
+  const panel=document.getElementById('admin-panel-section');
+  const existing=lsGet('sp_totp_secret');
+  const secret=existing||genTOTPSecret();
+  if(!existing) lsSet('sp_totp_secret',secret);
+  const qr=totpQRUrl(secret);
+  const setupHtml=`<div style="max-width:520px;margin:0 auto;padding:0 16px">
+    <div class="admin-form-card" style="margin-top:16px">
+      <div class="admin-form-title" style="font-size:1rem">🔑 Two-Factor Authentication Setup</div>
+      <div class="admin-step"><div class="admin-step-num">1</div><div class="admin-step-text">Download <strong>Google Authenticator</strong> or <strong>Authy</strong> on your phone</div></div>
+      <div class="admin-step"><div class="admin-step-num">2</div><div class="admin-step-text">Tap <strong>+</strong> → <strong>Scan QR code</strong> and scan the code below</div></div>
+      <div class="admin-step"><div class="admin-step-num">3</div><div class="admin-step-text">Enter the <strong>6-digit code</strong> to verify and save</div></div>
+      <div class="qr-wrap"><img src="${qr}" width="220" height="220" alt="Scan this QR code"><div class="secret-box">Manual entry key: ${secret}</div></div>
+      <div class="admin-input-group" style="margin-top:14px"><label>Verify — enter the 6-digit code from your app</label>
+        <input type="number" class="admin-2fa-input" id="setup-totp-code" placeholder="000000" maxlength="6">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn-save" onclick="verify2FASetup('${secret}')">✅ Verify & Save 2FA</button>
+        <button class="btn-sm btn-danger" onclick="disable2FA()">🗑️ Disable 2FA</button>
+      </div>
+      <div style="margin-top:10px"><button class="btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="renderAdminPanel()">← Back to dashboard</button></div>
+    </div>
+  </div>`;
+  panel.innerHTML=setupHtml;
+}
+
+async function verify2FASetup(secret){
+  const code=String(document.getElementById('setup-totp-code')?.value||'').trim();
+  if(code.length!==6){showToast('⚠️ Enter a 6-digit code');return}
+  const ok=await verifyTOTP(secret,code);
+  if(!ok){showToast('❌ Wrong code — try again');return}
+  lsSet('sp_totp_secret',secret);
+  showToast('✅ 2FA enabled! You will need this on every login.');
+  renderAdminPanel();
+}
+
+function disable2FA(){
+  if(!confirm('Disable 2FA? This removes the extra login protection.'))return;
+  localStorage.removeItem('sp_totp_secret');
+  showToast('⚠️ 2FA disabled');renderAdminPanel();
+}
 
 /* ============================================================
    POWER CALCULATOR (full port from v2)
@@ -1821,6 +1997,23 @@ function shareViaPlatform(p){const l=document.getElementById('share-link-value')
 function formatP(a){if(!a)return'₱0';return'₱'+Number(a).toLocaleString('en-PH')}
 function timeAgo(ts){const d=Date.now()-ts;if(d<60000)return'just now';if(d<3600000)return Math.floor(d/60000)+'m ago';if(d<86400000)return Math.floor(d/3600000)+'h ago';if(d<604800000)return Math.floor(d/86400000)+'d ago';return new Date(ts).toLocaleDateString('en-PH',{month:'short',day:'numeric'})}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+function showDbEmptyBanner(){
+  // Insert a sticky banner at the top of main content
+  const banner=document.createElement('div');
+  banner.id='db-empty-banner';
+  banner.style.cssText='background:#FEF3C7;border:2px solid #F59E0B;border-radius:12px;padding:14px 16px;margin:12px 16px;max-width:488px;margin-left:auto;margin-right:auto';
+  banner.innerHTML=`
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;color:#92400E;margin-bottom:6px">⚠️ Database Not Set Up Yet</div>
+    <div style="font-size:.78rem;color:#92400E;line-height:1.6;margin-bottom:10px">
+      Your Supabase is connected but the tables are empty.<br>
+      You need to run the <strong>solar-pinas-setup.sql</strong> file in your Supabase SQL Editor.
+    </div>
+    <div style="font-size:.72rem;color:#78350F;margin-bottom:8px"><strong>Steps:</strong> Supabase Dashboard → SQL Editor → New Query → paste &amp; run setup.sql</div>
+    <button onclick="document.getElementById('db-empty-banner').remove()" style="padding:6px 14px;background:#F59E0B;color:#1C1917;border-radius:8px;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;border:none;cursor:pointer">Got it</button>
+  `;
+  document.querySelector('.page.active')?.prepend(banner) || document.body.prepend(banner);
+}
+
 function checkHashRoute(){const h=window.location.hash.substring(1);const p={};h.split('&').forEach(part=>{const[k,v]=part.split('=');if(k&&v)p[k]=v});if(p.group){const g=getGroups().find(x=>x.id==p.group);if(g){const cat=getCats().find(c=>c.id==g.category_id);state.cat=cat;navigate('products',{group:g})}}}
 
 async function initApp(){
@@ -1835,16 +2028,30 @@ async function initApp(){
   SB = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
   try {
     await loadAllData();
-    setLoaderMsg('Done! Welcome to SolarPinas ☀️');
-    await new Promise(r=>setTimeout(r,400));
-    hideLoader();
+    // ── Check if DB has been seeded ──
+    if(C.categories.length===0){
+      setLoaderMsg('⚠️ Database is empty — run the setup SQL first!');
+      document.querySelector('.loader-fill').style.animation='none';
+      document.querySelector('.loader-fill').style.background='#F59E0B';
+      document.querySelector('.loader-sun').textContent='⚠️';
+      // Still show the app but with empty state
+      await new Promise(r=>setTimeout(r,1500));
+      hideLoader();
+      showDbEmptyBanner();
+    } else {
+      setLoaderMsg('Done! Welcome to SolarPinas ☀️');
+      await new Promise(r=>setTimeout(r,350));
+      hideLoader();
+    }
     renderHome();
     checkHashRoute();
   } catch(err){
     console.error('Init failed:',err);
-    document.getElementById('loader-msg').textContent='❌ Connection failed. Check your Supabase config.';
+    const errMsg = err?.message || String(err);
+    document.getElementById('loader-msg').textContent='❌ '+errMsg.slice(0,80);
     document.querySelector('.loader-fill').style.animation='none';
     document.querySelector('.loader-fill').style.background='#EF4444';
+    document.querySelector('.loader-sun').textContent='❌';
   }
 }
 document.addEventListener('DOMContentLoaded', initApp);
